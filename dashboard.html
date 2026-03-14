@@ -413,38 +413,38 @@
         <img src="logo.png" alt="Reppo Logo">
       </div>
       <div class="header-text">
-        <h1 class="title">Metrics / Reppo</h1>
+        <h1 class="title" data-i18n="metrics_title">Metrics / Reppo</h1>
         <div class="subtitle">
           <div class="live-dot" id="live-dot"></div>
-          <span id="live-text" class="subtitle-live-text">Live Data Overview</span>
+          <span id="live-text" class="subtitle-live-text" data-i18n="live_data">Live Data Overview</span>
         </div>
       </div>
       
       <div class="header-actions">
-        <button class="time-filter active" data-days="7">7D</button>
-        <button class="time-filter" data-days="30">30D</button>
-        <button class="time-filter" data-days="90">90D</button>
+        <button class="time-filter active" data-days="7"><span data-i18n="7d">7D</span></button>
+        <button class="time-filter" data-days="30"><span data-i18n="30d">30D</span></button>
+        <button class="time-filter" data-days="90"><span data-i18n="90d">90D</span></button>
       </div>
     </header>
 
     <!-- Top Metrics -->
     <div class="metrics-grid">
       <div class="metric-card">
-        <div class="metric-title">Total Visits</div>
+        <div class="metric-title" data-i18n="total_visits">Total Visits</div>
         <div class="metric-value" id="val-visits">
           -- <span class="metric-trend">---</span>
         </div>
       </div>
       
       <div class="metric-card">
-        <div class="metric-title">Download Clicks</div>
+        <div class="metric-title" data-i18n="download_clicks">Download Clicks</div>
         <div class="metric-value" id="val-clicks">
           -- <span class="metric-trend">---</span>
         </div>
       </div>
       
       <div class="metric-card">
-        <div class="metric-title">Conversion Rate</div>
+        <div class="metric-title" data-i18n="conversion_rate">Conversion Rate</div>
         <div class="metric-value" id="val-conversion">
           --%
         </div>
@@ -456,7 +456,7 @@
       <!-- Main Line Chart: Traffic over time -->
       <div class="chart-card">
         <div class="chart-header">
-          <h2 class="chart-title">Traffic & Conversions</h2>
+          <h2 class="chart-title" data-i18n="traffic_conversions">Traffic & Conversions</h2>
         </div>
         <div class="chart-container" id="mainChartContainer">
           <div class="skeleton skeleton-chart" id="mainChartSkeleton"></div>
@@ -467,7 +467,7 @@
       <!-- Doughnut Chart: Traffic Sources -->
       <div class="chart-card">
         <div class="chart-header">
-          <h2 class="chart-title">Top Countries</h2>
+          <h2 class="chart-title" data-i18n="top_countries">Top Countries</h2>
         </div>
         <div class="chart-container" id="sourceChartContainer">
           <div class="skeleton skeleton-chart" id="sourceChartSkeleton"></div>
@@ -477,12 +477,62 @@
     </div>
     
     <footer class="footer">
-      <p>Secure Reppo Dashboard • <a href="index.html">View Landing Page</a></p>
+      <p><span data-i18n="secure_dash">Secure Reppo Dashboard</span> • <a href="index.html" data-i18n="view_landing">View Landing Page</a></p>
     </footer>
 
   </div>
 
   <script>
+    const translations = {
+      en: {
+        metrics_title: "Metrics / Reppo", live_data: "Live Data Overview",
+        "7d": "7D", "30d": "30D", "90d": "90D",
+        total_visits: "Total Visits", download_clicks: "Download Clicks", conversion_rate: "Conversion Rate",
+        traffic_conversions: "Traffic & Conversions", top_countries: "Top Countries",
+        secure_dash: "Secure Reppo Dashboard", view_landing: "View Landing Page",
+        active_users: "{count} Active User{s} Right Now", zero_active: "0 Active Users right now",
+        today: "Today", days_label: "{days} Days", error: "Error"
+      },
+      es: {
+        metrics_title: "Métricas / Reppo", live_data: "Datos en Tiempo Real",
+        "7d": "7D", "30d": "30D", "90d": "90D",
+        total_visits: "Visitas Totales", download_clicks: "Clics de Descarga", conversion_rate: "Tasa de Conversión",
+        traffic_conversions: "Tráfico y Conversiones", top_countries: "Países Principales",
+        secure_dash: "Panel Seguro Reppo", view_landing: "Ver Landing Page",
+        active_users: "{count} Usuario{s} Activo{s} Ahora", zero_active: "0 Usuarios Activos ahora",
+        today: "Hoy", days_label: "{days} Días", error: "Error"
+      },
+      pt: {
+        metrics_title: "Métricas / Reppo", live_data: "Dados em Tempo Real",
+        "7d": "7D", "30d": "30D", "90d": "90D",
+        total_visits: "Visitas Totais", download_clicks: "Cliques de Download", conversion_rate: "Taxa de Conversão",
+        traffic_conversions: "Tráfego e Conversões", top_countries: "Principais Países",
+        secure_dash: "Painel Seguro Reppo", view_landing: "Ver Landing Page",
+        active_users: "{count} Usuário{s} Ativo{s} Agora", zero_active: "0 Usuários Ativos agora",
+        today: "Hoje", days_label: "{days} Dias", error: "Erro"
+      }
+    };
+
+    function getLang() {
+      const lang = navigator.language.slice(0, 2).toLowerCase();
+      return ['es', 'pt'].includes(lang) ? lang : 'en';
+    }
+    
+    function t(key, params = {}) {
+      const lang = getLang();
+      let res = translations[lang][key] || translations['en'][key];
+      for(const k in params) {
+        res = res.replace(`{${k}}`, params[k]);
+      }
+      return res;
+    }
+
+    function applyTranslations() {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        el.innerText = t(el.getAttribute('data-i18n'));
+      });
+    }
+
     // Global Chart Defaults matching Reppo aesthetic
     Chart.defaults.color = '#9CA3AF';
     Chart.defaults.font.family = "'Inter', sans-serif";
@@ -536,7 +586,7 @@
     async function fetchAnalyticsData(days = 7) {
       const isInitialLoad = !mainChartInstance;
       currentDays = days;
-      const trendLabel = days === 1 ? "Today" : `${days} Days`;
+      const trendLabel = days === 1 ? t('today') : t('days_label', {days});
       
       if (isInitialLoad) {
         setSkeletonState(true);
@@ -584,8 +634,8 @@
         
       } catch (error) {
         console.error('Error fetching data:', error);
-        document.getElementById('val-visits').innerText = 'Error';
-        document.getElementById('val-clicks').innerText = 'Error';
+        document.getElementById('val-visits').innerText = t('error');
+        document.getElementById('val-clicks').innerText = t('error');
       }
     }
 
@@ -782,11 +832,11 @@
           const dotEl = document.getElementById('live-dot');
           
           if (count > 0) {
-            textEl.innerText = `${count} Active User${count !== 1 ? 's' : ''} Right Now`;
+            textEl.innerText = t('active_users', {count: count, s: count !== 1 ? 's' : ''});
             textEl.classList.add('active');
             dotEl.classList.remove('inactive');
           } else {
-            textEl.innerText = '0 Active Users right now';
+            textEl.innerText = t('zero_active');
             textEl.classList.remove('active');
             dotEl.classList.add('inactive');
           }
@@ -798,6 +848,7 @@
 
     // Load data on page load
     document.addEventListener('DOMContentLoaded', () => {
+      applyTranslations();
       fetchAnalyticsData(7);
       fetchRealtimeActiveUsers();
       // Poll real-time active users every 15 seconds
