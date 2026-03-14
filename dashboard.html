@@ -260,6 +260,53 @@
         grid-template-columns: 1fr;
       }
     }
+    
+    @media (max-width: 600px) {
+      .dashboard-container {
+        padding: 24px 16px;
+      }
+      .header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+      .header-text {
+        align-items: center;
+        text-align: center;
+        width: 100%;
+      }
+      .app-icon {
+        margin: 0 auto;
+      }
+      .subtitle {
+        justify-content: center;
+      }
+      .header-actions {
+        margin-left: 0;
+        width: 100%;
+        justify-content: space-between;
+      }
+      .time-filter {
+        flex: 1;
+        text-align: center;
+      }
+      .title {
+        font-size: 24px;
+      }
+      .metrics-grid {
+        grid-template-columns: 1fr;
+      }
+      .metric-value {
+        font-size: 30px;
+      }
+      .chart-container {
+        height: 250px;
+      }
+      .chart-card {
+        padding: 16px;
+      }
+    }
 
     .chart-card {
       background: var(--card-bg);
