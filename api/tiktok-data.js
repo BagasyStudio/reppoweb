@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        max_count: 30 // Fetch more videos to populate the charts
+        max_count: 20 // Fetch max allowed videos to populate the charts
       })
     });
 
