@@ -951,20 +951,28 @@
       // Try fetching TikTok data. If cookie is present and valid, it will succeed.
       try {
         const res = await fetch('/api/tiktok-data');
-        if (res.ok) {
-          const data = await res.json();
-          // Hide login, show metrics
-          document.getElementById('tiktok-login-card').style.display = 'none';
-          document.getElementById('tiktok-metrics-grid').style.display = 'grid';
-          
-          // Animate and set values
-          animateValue(document.getElementById('val-tk-followers'), 0, data.stats.followers, 1000);
-          animateValue(document.getElementById('val-tk-likes'), 0, data.stats.total_likes, 1000);
-          animateValue(document.getElementById('val-tk-views'), 0, data.stats.estimated_total_views, 1000);
-          
-          if(urlParams.get('tiktok') === 'success') {
-             window.history.replaceState({}, document.title, window.location.pathname);
+        const data = await res.json();
+        
+        if (!res.ok) {
+          console.error('TikTok Data API Error:', data);
+          if (urlParams.get('tiktok') === 'success') {
+            alert(t('error') + ': TikTok Data Fetch Failed. \n' + (data.error || ''));
+            window.history.replaceState({}, document.title, window.location.pathname);
           }
+          return;
+        }
+
+        // Hide login, show metrics
+        document.getElementById('tiktok-login-card').style.display = 'none';
+        document.getElementById('tiktok-metrics-grid').style.display = 'grid';
+        
+        // Animate and set values
+        animateValue(document.getElementById('val-tk-followers'), 0, data.stats.followers, 1000);
+        animateValue(document.getElementById('val-tk-likes'), 0, data.stats.total_likes, 1000);
+        animateValue(document.getElementById('val-tk-views'), 0, data.stats.estimated_total_views, 1000);
+        
+        if(urlParams.get('tiktok') === 'success') {
+           window.history.replaceState({}, document.title, window.location.pathname);
         }
       } catch(e) {
         console.log('TikTok not authenticated or fetch failed.', e);

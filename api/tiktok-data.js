@@ -23,8 +23,8 @@ export default async function handler(req, res) {
 
     const userData = await userRes.json();
     
-    // Check if token expired or invalid
-    if (userData.error && userData.error.code !== 0) {
+    // Check if token expired or invalid (TikTok v2 uses 'ok' as success code)
+    if (userData.error && userData.error.code !== 'ok' && userData.error.code !== 0) {
       console.error('TikTok API User Error:', userData.error);
       return res.status(401).json({ error: 'Token expired or invalid', details: userData.error });
     }
