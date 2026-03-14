@@ -164,6 +164,84 @@
       box-shadow: inset 0 0 0 1px rgba(226, 255, 0, 0.2), 0 4px 12px rgba(226, 255, 0, 0.05);
     }
     
+    /* TikTok Ultra UI Classes */
+    .video-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 16px;
+      margin-top: 24px;
+      display: none; /* Hidden until loaded */
+    }
+    .video-card {
+      position: relative;
+      aspect-ratio: 9/16;
+      border-radius: 16px;
+      overflow: hidden;
+      background-size: cover;
+      background-position: center;
+      background-color: #1A1A1A;
+      box-shadow: 0 10px 30px -10px rgba(0,0,0,0.5);
+      transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.4s ease;
+      cursor: pointer;
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .video-card:hover {
+      transform: translateY(-8px) scale(1.03);
+      box-shadow: 0 20px 40px -10px rgba(226, 255, 0, 0.15);
+      border-color: rgba(226, 255, 0, 0.3);
+    }
+    .video-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.5) 40%, transparent 100%);
+      pointer-events: none;
+    }
+    .video-content {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      color: white;
+      z-index: 1;
+    }
+    .video-title {
+      font-size: 13px;
+      line-height: 1.3;
+      margin-bottom: 4px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      opacity: 0.9;
+    }
+    .video-stat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .video-stat {
+      display: flex;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 500;
+      font-family: 'Inter', sans-serif;
+    }
+    .video-stat i {
+      color: #E2FF00;
+      margin-right: 6px;
+      font-size: 14px;
+    }
+    .tiktok-charts-container {
+      display: none; /* Hidden until loaded */
+      margin-top: 32px;
+    }
+
     .live-dot {
       width: 8px;
       height: 8px;
@@ -550,6 +628,28 @@
           <div class="metric-value" id="val-tk-views">--</div>
         </div>
       </div>
+
+      <!-- TIKTOK CHARTS SECTION -->
+      <div class="tiktok-charts-container" id="tiktok-charts-container">
+        <div class="chart-card" style="margin-bottom: 32px;">
+          <div class="chart-header">
+            <h3 class="chart-title"><i class="fas fa-chart-line" style="color: #E2FF00; margin-right: 8px;"></i> Engagement Over Time</h3>
+            <div class="filters">
+              <button class="time-filter active" onclick="updateTikTokChart(7)">7D</button>
+              <button class="time-filter" onclick="updateTikTokChart(30)">30D</button>
+            </div>
+          </div>
+          <div class="chart-container" style="height: 350px;">
+            <canvas id="tiktokTimelineChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- TIKTOK RECENT VIDEOS SECTION -->
+      <h3 id="tiktok-video-grid-title" class="chart-title" style="display: none; margin-top: 32px; margin-bottom: 16px;"><i class="fas fa-video" style="color: #ff2a5f; margin-right: 8px;"></i> Recent Videos</h3>
+      <div class="video-grid" id="tiktok-video-grid">
+        <!-- Videos injected via JS -->
+      </div>
     </div>
     
     <footer class="footer">
@@ -623,6 +723,8 @@
 
     let mainChartInstance = null;
     let sourceChartInstance = null;
+    let tiktokTimelineChartInstance = null;
+    let currentTikTokData = null;
     let currentDays = 7;
     
     // Smooth number counter animation
@@ -912,6 +1014,84 @@
       });
     });
 
+    function renderTikTokChart(videos, days) {
+      const ctx = document.getElementById('tiktokTimelineChart').getContext('2d');
+      const now = Math.floor(Date.now() / 1000);
+      const cutoff = now - (days * 24 * 60 * 60);
+      const filteredVideos = videos.filter(v => v.create_time >= cutoff).sort((a,b) => a.create_time - b.create_time);
+      
+      const labels = filteredVideos.map(v => new Date(v.create_time * 1000).toLocaleDateString(getLang(), {month: 'short', day: 'numeric'}));
+      const views = filteredVideos.map(v => v.view_count || 0);
+      const likes = filteredVideos.map(v => v.like_count || 0);
+
+      if (tiktokTimelineChartInstance) {
+        tiktokTimelineChartInstance.data.labels = labels;
+        tiktokTimelineChartInstance.data.datasets[0].data = views;
+        tiktokTimelineChartInstance.data.datasets[1].data = likes;
+        tiktokTimelineChartInstance.update({ duration: 800, easing: 'easeOutQuart' });
+      } else {
+        tiktokTimelineChartInstance = new Chart(ctx, {
+          type: 'line',
+          data: {
+            labels: labels,
+            datasets: [
+              { label: 'Views', data: views, borderColor: '#E2FF00', backgroundColor: 'rgba(226, 255, 0, 0.1)', fill: true, tension: 0.4, pointRadius: 4, pointHoverRadius: 6 },
+              { label: 'Likes', data: likes, borderColor: '#ff2a5f', backgroundColor: 'transparent', borderDash: [5, 5], tension: 0.4, pointRadius: 4, pointHoverRadius: 6 }
+            ]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
+            plugins: {
+              legend: { labels: { color: 'rgba(255,255,255,0.8)', font: { family: "'Inter', sans-serif" } } },
+              tooltip: { backgroundColor: 'rgba(0,0,0,0.8)' }
+            },
+            scales: {
+              y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: "'Inter', sans-serif" } } },
+              x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: "'Inter', sans-serif" } } }
+            }
+          }
+        });
+      }
+    }
+
+    function updateTikTokChart(days) {
+      if(!currentTikTokData) return;
+      renderTikTokChart(currentTikTokData.videos, days);
+      if(window.event && window.event.target) {
+        const btn = window.event.target;
+        btn.parentElement.querySelectorAll('.time-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+      }
+    }
+
+    function renderTikTokVideos(videos) {
+      const grid = document.getElementById('tiktok-video-grid');
+      grid.innerHTML = '';
+      if(videos.length === 0) {
+        grid.innerHTML = '<p style="color:rgba(255,255,255,0.5); grid-column: 1/-1;">No videos found.</p>';
+        return;
+      }
+      videos.forEach(v => {
+        const cover = v.cover_image_url || 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?q=80&w=400&auto=format&fit=crop';
+        const card = document.createElement('div');
+        card.className = 'video-card';
+        card.style.backgroundImage = `url('${cover}')`;
+        card.innerHTML = `
+          <div class="video-content">
+            <div class="video-title">${v.title || 'TikTok Video'}</div>
+            <div class="video-stat-grid">
+              <div class="video-stat"><i class="fas fa-play"></i> ${(v.view_count || 0).toLocaleString()}</div>
+              <div class="video-stat"><i class="fas fa-heart" style="color: #ff2a5f;"></i> ${(v.like_count || 0).toLocaleString()}</div>
+              <div class="video-stat"><i class="fas fa-share" style="color: #00f2fe;"></i> ${(v.share_count || 0).toLocaleString()}</div>
+              <div class="video-stat"><i class="fas fa-comment" style="color: #fff;"></i> ${(v.comment_count || 0).toLocaleString()}</div>
+            </div>
+          </div>
+        `;
+        grid.appendChild(card);
+      });
+    }
+
     async function fetchRealtimeActiveUsers() {
       try {
         const res = await fetch('/api/analytics?realtime=true');
@@ -962,14 +1142,25 @@
           return;
         }
 
+        currentTikTokData = data;
+
         // Hide login, show metrics
         document.getElementById('tiktok-login-card').style.display = 'none';
         document.getElementById('tiktok-metrics-grid').style.display = 'grid';
+        document.getElementById('tiktok-charts-container').style.display = 'block';
+        document.getElementById('tiktok-video-grid-title').style.display = 'block';
+        document.getElementById('tiktok-video-grid').style.display = 'grid';
         
         // Animate and set values
         animateValue(document.getElementById('val-tk-followers'), 0, data.stats.followers, 1000);
         animateValue(document.getElementById('val-tk-likes'), 0, data.stats.total_likes, 1000);
         animateValue(document.getElementById('val-tk-views'), 0, data.stats.estimated_total_views, 1000);
+        
+        // Render charts and videos
+        renderTikTokChart(data.videos, 30); // Default to 30D
+        document.querySelector('.tiktok-charts-container .time-filter[onclick="updateTikTokChart(30)"]').classList.add('active');
+        document.querySelector('.tiktok-charts-container .time-filter[onclick="updateTikTokChart(7)"]').classList.remove('active');
+        renderTikTokVideos(data.videos);
         
         if(urlParams.get('tiktok') === 'success') {
            window.history.replaceState({}, document.title, window.location.pathname);

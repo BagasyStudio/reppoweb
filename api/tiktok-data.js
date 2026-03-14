@@ -29,8 +29,8 @@ export default async function handler(req, res) {
       return res.status(401).json({ error: 'Token expired or invalid', details: userData.error });
     }
 
-    // 2. Fetch Video List to aggregate total views (Requires video.list scope)
-    const videoUrl = 'https://open.tiktokapis.com/v2/video/list/?fields=id,view_count,like_count,share_count';
+    // 2. Fetch Video List to aggregate total views and build timeline (Requires video.list scope)
+    const videoUrl = 'https://open.tiktokapis.com/v2/video/list/?fields=id,title,cover_image_url,create_time,view_count,like_count,share_count,comment_count';
     const videoRes = await fetch(videoUrl, {
       method: 'POST', // TikTok v2 /video/list/ sometimes requires POST with empty queries
       headers: {
@@ -38,7 +38,7 @@ export default async function handler(req, res) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        max_count: 20 // Fetch up to latest 20 videos for summary
+        max_count: 30 // Fetch more videos to populate the charts
       })
     });
 
