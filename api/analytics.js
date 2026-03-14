@@ -19,8 +19,8 @@ const analyticsDataClient = new BetaAnalyticsDataClient(
   credentials ? { credentials } : undefined
 );
 
-// The GA4 Property ID for Reppo Landing Page we created earlier
-const propertyId = '482618991'; 
+// The GA4 Property ID for Reppo Landing Page
+const propertyId = '528457019'; 
 
 export default async function handler(req, res) {
   // Add CORS headers so dashboard.html can fetch this if needed 
@@ -35,53 +35,41 @@ export default async function handler(req, res) {
   }
 
   try {
-    // We want two sets of data:
-    // 1. Daily visits and clicks over the last 7 days
-    // 2. Top countries
+    // Determine the date range from the query parameters, default to 7 days
+    const queryDays = req.query.days ? parseInt(req.query.days, 10) : 7;
+    // Cap to a maximum to prevent huge data pulls, e.g., 90 days. Minimum 1 day.
+    const validDays = isNaN(queryDays) ? 7 : Math.min(Math.max(queryDays, 1), 90);
+    const startDate = `${validDays}daysAgo`;
 
-    const [dailyResponse] = await analyticsDataClient.runReport({
+    const [sessionsData] = await analyticsDataClient.runReport({
       property: `properties/${propertyId}`,
-      dateRanges: [
-        {
-          startDate: '7daysAgo',
-          endDate: 'today',
-        },
-      ],
-      dimensions: [
-        {
-          name: 'date',
-        },
-      ],
-      metrics: [
-        {
-          name: 'sessions', // General visits
-        },
-        {
-          name: 'eventCount', // Clicks (filtered below)
-        }
-      ],
+      dateRanges: [{ startDate: startDate, endDate: 'today' }],
+      dimensions: [{ name: 'date' }],
+      metrics: [{ name: 'sessions' }],
+      orderBys: [{ dimension: { dimensionName: 'date' } }]
+    });
+
+    const [clicksData] = await analyticsDataClient.runReport({
+      property: `properties/${propertyId}`,
+      dateRanges: [{ startDate: startDate, endDate: 'today' }],
+      dimensions: [{ name: 'date' }],
+      metrics: [{ name: 'eventCount' }],
       dimensionFilter: {
         filter: {
           fieldName: 'eventName',
-          inListFilter: {
-            values: ['session_start', 'conversion_click']
+          stringFilter: {
+            value: 'conversion_click'
           }
         }
       },
-      orderBys: [
-        {
-          dimension: {
-            dimensionName: 'date',
-          },
-        },
-      ],
+      orderBys: [{ dimension: { dimensionName: 'date' } }]
     });
 
     const [countryResponse] = await analyticsDataClient.runReport({
       property: `properties/${propertyId}`,
       dateRanges: [
         {
-          startDate: '7daysAgo',
+          startDate: startDate,
           endDate: 'today',
         },
       ],
@@ -104,37 +92,6 @@ export default async function handler(req, res) {
         },
       ],
       limit: 5
-    });
-
-    // Format the Daily Response
-    // We need to parse dates and separate sessions vs clicks
-    // The Data API returns rows. If a day had no 'conversion_click' it might be complex to parse with the filter above.
-    // Let's do a simpler approach: fetch all sessions, and fetch specifically 'conversion_click' count.
-    
-    // Actually, running two separate simple queries is safer and easier to parse.
-
-    const [sessionsData] = await analyticsDataClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-      dimensions: [{ name: 'date' }],
-      metrics: [{ name: 'sessions' }],
-      orderBys: [{ dimension: { dimensionName: 'date' } }]
-    });
-
-    const [clicksData] = await analyticsDataClient.runReport({
-      property: `properties/${propertyId}`,
-      dateRanges: [{ startDate: '7daysAgo', endDate: 'today' }],
-      dimensions: [{ name: 'date' }],
-      metrics: [{ name: 'eventCount' }],
-      dimensionFilter: {
-        filter: {
-          fieldName: 'eventName',
-          stringFilter: {
-            value: 'conversion_click'
-          }
-        }
-      },
-      orderBys: [{ dimension: { dimensionName: 'date' } }]
     });
 
     // Merge and format

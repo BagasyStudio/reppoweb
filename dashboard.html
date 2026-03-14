@@ -117,6 +117,36 @@
       gap: 6px;
     }
     
+    .header-actions {
+      margin-left: auto;
+      display: flex;
+      gap: 8px;
+    }
+
+    .time-filter {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      color: var(--text-sec);
+      font-family: var(--font-body);
+      font-size: 13px;
+      font-weight: 500;
+      padding: 8px 16px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: var(--transition);
+    }
+
+    .time-filter:hover {
+      border-color: rgba(226, 255, 0, 0.3);
+      color: #FFF;
+    }
+
+    .time-filter.active {
+      background: rgba(226, 255, 0, 0.1);
+      border-color: var(--accent);
+      color: var(--accent);
+    }
+    
     .live-dot {
       width: 8px;
       height: 8px;
@@ -267,8 +297,14 @@
         <h1 class="title">Metrics / Reppo</h1>
         <div class="subtitle">
           <div class="live-dot"></div>
-          Live Data Overview (Last 7 Days)
+          Live Data Overview
         </div>
+      </div>
+      
+      <div class="header-actions">
+        <button class="time-filter active" data-days="7">7D</button>
+        <button class="time-filter" data-days="30">30D</button>
+        <button class="time-filter" data-days="90">90D</button>
       </div>
     </header>
 
@@ -334,10 +370,17 @@
 
     let mainChartInstance = null;
     let sourceChartInstance = null;
+    let currentDays = 7;
 
-    async function fetchAnalyticsData() {
+    async function fetchAnalyticsData(days = 7) {
+      currentDays = days;
+      const trendLabel = days === 1 ? "Today" : `${days} Days`;
+      
+      // Show loading state by dimming UI
+      document.querySelector('.dashboard-container').style.opacity = '0.5';
+
       try {
-        const response = await fetch('/api/analytics');
+        const response = await fetch(`/api/analytics?days=${days}`);
         if (!response.ok) {
           throw new Error('Network response was not ok');
         }
@@ -349,8 +392,8 @@
         const cvr = totalVisits > 0 ? ((totalClicks / totalVisits) * 100).toFixed(1) : "0.0";
 
         // Update UI
-        document.getElementById('val-visits').innerHTML = `${totalVisits} <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">7 Days</span>`;
-        document.getElementById('val-clicks').innerHTML = `${totalClicks} <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">7 Days</span>`;
+        document.getElementById('val-visits').innerHTML = `${totalVisits} <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">${trendLabel}</span>`;
+        document.getElementById('val-clicks').innerHTML = `${totalClicks} <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">${trendLabel}</span>`;
         document.getElementById('val-conversion').innerHTML = `${cvr}%`;
 
         // Render Charts
@@ -360,8 +403,23 @@
         console.error('Error fetching data:', error);
         document.getElementById('val-visits').innerText = 'Error';
         document.getElementById('val-clicks').innerText = 'Error';
+      } finally {
+        document.querySelector('.dashboard-container').style.opacity = '1';
       }
     }
+
+    // Handle Filter Clicks
+    document.querySelectorAll('.time-filter').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        // Remove active class from all
+        document.querySelectorAll('.time-filter').forEach(b => b.classList.remove('active'));
+        // Add active class to clicked
+        e.target.classList.add('active');
+        // Fetch data
+        const days = parseInt(e.target.getAttribute('data-days'));
+        fetchAnalyticsData(days);
+      });
+    });
 
     function renderMainChart(dailyData) {
       const ctxMain = document.getElementById('mainChart').getContext('2d');
