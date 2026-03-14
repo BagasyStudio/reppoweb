@@ -105,6 +105,7 @@
       font-weight: 800;
       line-height: 1.1;
       background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
+      background-clip: text;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
     }
@@ -268,7 +269,32 @@
     }
     .footer a:hover { color: #FFF; }
 
+    /* Skeleton Loader */
+    .skeleton {
+      background: linear-gradient(90deg, rgba(255,255,255,0.03) 25%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0.03) 75%);
+      background-size: 200% 100%;
+      animation: shimmer 1.5s infinite linear;
+      border-radius: 8px;
+    }
+
+    .skeleton-text {
+      height: 36px;
+      width: 100px;
+      display: inline-block;
+    }
+    
+    .skeleton-chart {
+      height: 100%;
+      width: 100%;
+      border-radius: 12px;
+    }
+
     /* Animations */
+    @keyframes shimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+    
     @keyframes fadeUp {
       from { opacity: 0; transform: translateY(20px); }
       to { opacity: 1; transform: translateY(0); }
@@ -339,8 +365,9 @@
         <div class="chart-header">
           <h2 class="chart-title">Traffic & Conversions</h2>
         </div>
-        <div class="chart-container">
-          <canvas id="mainChart"></canvas>
+        <div class="chart-container" id="mainChartContainer">
+          <div class="skeleton skeleton-chart" id="mainChartSkeleton"></div>
+          <canvas id="mainChart" style="opacity: 0; transition: opacity 0.5s ease;"></canvas>
         </div>
       </div>
       
@@ -349,8 +376,9 @@
         <div class="chart-header">
           <h2 class="chart-title">Top Countries</h2>
         </div>
-        <div class="chart-container">
-          <canvas id="sourceChart"></canvas>
+        <div class="chart-container" id="sourceChartContainer">
+          <div class="skeleton skeleton-chart" id="sourceChartSkeleton"></div>
+          <canvas id="sourceChart" style="opacity: 0; transition: opacity 0.5s ease;"></canvas>
         </div>
       </div>
     </div>
@@ -371,13 +399,59 @@
     let mainChartInstance = null;
     let sourceChartInstance = null;
     let currentDays = 7;
+    
+    // Smooth number counter animation
+    function animateValue(obj, start, end, duration) {
+      // If updating the trend span, don't animate the HTML structure, just set it
+      let startTimestamp = null;
+      const step = (timestamp) => {
+        if (!startTimestamp) startTimestamp = timestamp;
+        const progress = Math.min((timestamp - startTimestamp) / duration, 1);
+        // Easing function (easeOutExpo)
+        const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress);
+        
+        let currentVal = start + (end - start) * easeProgress;
+        
+        // Check if it's a float (CVR) or Int (Visits/Clicks)
+        if (Number.isInteger(end) && Number.isInteger(start)) {
+          obj.childNodes[0].nodeValue = Math.floor(currentVal) + ' '; 
+        } else {
+          obj.childNodes[0].nodeValue = currentVal.toFixed(1) + (obj.id === 'val-conversion' ? '%' : ' ');
+        }
+        
+        if (progress < 1) {
+          window.requestAnimationFrame(step);
+        }
+      };
+      window.requestAnimationFrame(step);
+    }
+    
+    function setSkeletonState(isLoading) {
+      const metrics = ['val-visits', 'val-clicks', 'val-conversion'];
+      if(isLoading) {
+        metrics.forEach(m => document.getElementById(m).innerHTML = '<div class="skeleton skeleton-text"></div>');
+        if(!mainChartInstance) document.getElementById('mainChartSkeleton').style.display = 'block';
+        if(!sourceChartInstance) document.getElementById('sourceChartSkeleton').style.display = 'block';
+      } else {
+        document.getElementById('mainChartSkeleton').style.display = 'none';
+        document.getElementById('sourceChartSkeleton').style.display = 'none';
+        document.getElementById('mainChart').style.opacity = '1';
+        document.getElementById('sourceChart').style.opacity = '1';
+      }
+    }
 
     async function fetchAnalyticsData(days = 7) {
+      const isInitialLoad = !mainChartInstance;
       currentDays = days;
       const trendLabel = days === 1 ? "Today" : `${days} Days`;
       
-      // Show loading state by dimming UI
-      document.querySelector('.dashboard-container').style.opacity = '0.5';
+      if (isInitialLoad) {
+        setSkeletonState(true);
+      } else {
+         // Subtle fade for refresh
+         document.getElementById('mainChart').style.opacity = '0.5';
+         document.getElementById('sourceChart').style.opacity = '0.5';
+      }
 
       try {
         const response = await fetch(`/api/analytics?days=${days}`);
@@ -386,31 +460,204 @@
         }
         const data = await response.json();
         
-        // Calculate totals
         const totalVisits = data.daily.visits.reduce((a, b) => a + Number(b), 0);
         const totalClicks = data.daily.clicks.reduce((a, b) => a + Number(b), 0);
-        const cvr = totalVisits > 0 ? ((totalClicks / totalVisits) * 100).toFixed(1) : "0.0";
+        const cvr = totalVisits > 0 ? parseFloat(((totalClicks / totalVisits) * 100).toFixed(1)) : 0.0;
 
-        // Update UI
-        document.getElementById('val-visits').innerHTML = `${totalVisits} <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">${trendLabel}</span>`;
-        document.getElementById('val-clicks').innerHTML = `${totalClicks} <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">${trendLabel}</span>`;
-        document.getElementById('val-conversion').innerHTML = `${cvr}%`;
+        // Update UI HTML structure if initially loading
+        if (isInitialLoad) {
+          document.getElementById('val-visits').innerHTML = `0 <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">${trendLabel}</span>`;
+          document.getElementById('val-clicks').innerHTML = `0 <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">${trendLabel}</span>`;
+          document.getElementById('val-conversion').innerHTML = `0.0%`;
+        } else {
+          // Update the trend labels silently
+          document.querySelector('#val-visits .metric-trend').innerText = trendLabel;
+          document.querySelector('#val-clicks .metric-trend').innerText = trendLabel;
+        }
 
-        // Render Charts
+        // Animate numbers
+        const currentVisits = isInitialLoad ? 0 : parseInt(document.getElementById('val-visits').childNodes[0].nodeValue || 0);
+        const currentClicks = isInitialLoad ? 0 : parseInt(document.getElementById('val-clicks').childNodes[0].nodeValue || 0);
+        const currentCvr = isInitialLoad ? 0.0 : parseFloat(document.getElementById('val-conversion').childNodes[0].nodeValue || 0);
+
+        animateValue(document.getElementById('val-visits'), currentVisits, totalVisits, 1000);
+        animateValue(document.getElementById('val-clicks'), currentClicks, totalClicks, 1000);
+        animateValue(document.getElementById('val-conversion'), currentCvr, cvr, 1000);
+
+        // Render Charts Smoothly
+        setSkeletonState(false);
         renderMainChart(data.daily);
         renderSourceChart(data.source);
+        
       } catch (error) {
         console.error('Error fetching data:', error);
         document.getElementById('val-visits').innerText = 'Error';
         document.getElementById('val-clicks').innerText = 'Error';
-      } finally {
-        document.querySelector('.dashboard-container').style.opacity = '1';
+      }
+    }
+
+    function renderMainChart(dailyData) {
+      const ctxMain = document.getElementById('mainChart').getContext('2d');
+      
+      const gradientVisits = ctxMain.createLinearGradient(0, 0, 0, 300);
+      gradientVisits.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+      gradientVisits.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+      const gradientClicks = ctxMain.createLinearGradient(0, 0, 0, 300);
+      gradientClicks.addColorStop(0, 'rgba(226, 255, 0, 0.4)');
+      gradientClicks.addColorStop(1, 'rgba(226, 255, 0, 0)');
+
+      if (mainChartInstance) {
+        // Update existing chart smoothly
+        mainChartInstance.data.labels = dailyData.dates;
+        mainChartInstance.data.datasets[0].data = dailyData.clicks;
+        mainChartInstance.data.datasets[1].data = dailyData.visits;
+        mainChartInstance.update({
+             duration: 800,
+             easing: 'easeOutQuart'
+        });
+      } else {
+        // Create new chart
+        mainChartInstance = new Chart(ctxMain, {
+          type: 'line',
+          data: {
+            labels: dailyData.dates,
+            datasets: [
+              {
+                label: 'Download Clicks',
+                data: dailyData.clicks,
+                borderColor: '#E2FF00',
+                backgroundColor: gradientClicks,
+                borderWidth: 3,
+                tension: 0.4,
+                fill: true,
+                pointBackgroundColor: '#121212',
+                pointBorderColor: '#E2FF00',
+                pointBorderWidth: 2,
+                pointRadius: 4,
+                pointHoverRadius: 6
+              },
+              {
+                label: 'Page Visits',
+                data: dailyData.visits,
+                borderColor: '#FFFFFF',
+                backgroundColor: gradientVisits,
+                borderWidth: 2,
+                borderDash: [5, 5],
+                tension: 0.4,
+                fill: true,
+                pointRadius: 0,
+                pointHoverRadius: 0
+              }
+            ]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+              duration: 1200,
+              easing: 'easeOutQuart'
+            },
+            plugins: {
+              legend: {
+                position: 'top',
+                align: 'end',
+                labels: {
+                  usePointStyle: true,
+                  boxWidth: 8,
+                  boxHeight: 8
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                titleFont: { family: "'Outfit', sans-serif", size: 14 },
+                bodyFont: { family: "'Inter', sans-serif", size: 13 },
+                padding: 12,
+                cornerRadius: 8,
+                displayColors: false
+              }
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                border: { display: false }
+              },
+              x: {
+                border: { display: false }
+              }
+            },
+            interaction: {
+              mode: 'index',
+              intersect: false,
+            }
+          }
+        });
+      }
+    }
+
+    function renderSourceChart(sourceData) {
+      const ctxSource = document.getElementById('sourceChart').getContext('2d');
+
+      if (sourceChartInstance) {
+        // Smoothly update Source Chart
+        sourceChartInstance.data.labels = sourceData.countries;
+        sourceChartInstance.data.datasets[0].data = sourceData.countryValues;
+        sourceChartInstance.update({
+             duration: 800,
+             easing: 'easeOutQuart'
+        });
+      } else {
+        sourceChartInstance = new Chart(ctxSource, {
+          type: 'doughnut',
+          data: {
+            labels: sourceData.countries.length > 0 ? sourceData.countries : ['No Data'],
+            datasets: [{
+              data: sourceData.countryValues.length > 0 ? sourceData.countryValues : [1],
+              backgroundColor: sourceData.countryValues.length > 0 ? [
+                '#E2FF00', '#FFFFFF', '#9CA3AF', '#4B5563', '#1F2937'
+              ] : ['#1F2937'],
+              borderWidth: 0,
+              hoverOffset: 4
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            cutout: '75%',
+            animation: {
+              duration: 1200,
+              easing: 'easeOutQuart'
+            },
+            plugins: {
+              legend: {
+                position: 'bottom',
+                labels: {
+                  usePointStyle: true,
+                  boxWidth: 8,
+                  boxHeight: 8,
+                  padding: 20
+                }
+              },
+              tooltip: {
+                backgroundColor: 'rgba(0,0,0,0.8)',
+                callbacks: {
+                  label: function(context) {
+                    return ` ${context.label}: ${context.raw}`;
+                  }
+                }
+              }
+            }
+          }
+        });
       }
     }
 
     // Handle Filter Clicks
     document.querySelectorAll('.time-filter').forEach(btn => {
       btn.addEventListener('click', (e) => {
+        // Prevent clicking the active one again
+        if(e.target.classList.contains('active')) return;
+        
         // Remove active class from all
         document.querySelectorAll('.time-filter').forEach(b => b.classList.remove('active'));
         // Add active class to clicked
@@ -421,146 +668,8 @@
       });
     });
 
-    function renderMainChart(dailyData) {
-      const ctxMain = document.getElementById('mainChart').getContext('2d');
-      
-      if (mainChartInstance) {
-        mainChartInstance.destroy();
-      }
-
-      const gradientVisits = ctxMain.createLinearGradient(0, 0, 0, 300);
-      gradientVisits.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
-      gradientVisits.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-      const gradientClicks = ctxMain.createLinearGradient(0, 0, 0, 300);
-      gradientClicks.addColorStop(0, 'rgba(226, 255, 0, 0.4)');
-      gradientClicks.addColorStop(1, 'rgba(226, 255, 0, 0)');
-
-      mainChartInstance = new Chart(ctxMain, {
-        type: 'line',
-        data: {
-          labels: dailyData.dates,
-          datasets: [
-            {
-              label: 'Download Clicks',
-              data: dailyData.clicks,
-              borderColor: '#E2FF00',
-              backgroundColor: gradientClicks,
-              borderWidth: 3,
-              tension: 0.4,
-              fill: true,
-              pointBackgroundColor: '#121212',
-              pointBorderColor: '#E2FF00',
-              pointBorderWidth: 2,
-              pointRadius: 4,
-              pointHoverRadius: 6
-            },
-            {
-              label: 'Page Visits',
-              data: dailyData.visits,
-              borderColor: '#FFFFFF',
-              backgroundColor: gradientVisits,
-              borderWidth: 2,
-              borderDash: [5, 5],
-              tension: 0.4,
-              fill: true,
-              pointRadius: 0,
-              pointHoverRadius: 0
-            }
-          ]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: {
-            legend: {
-              position: 'top',
-              align: 'end',
-              labels: {
-                usePointStyle: true,
-                boxWidth: 8,
-                boxHeight: 8
-              }
-            },
-            tooltip: {
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              titleFont: { family: "'Outfit', sans-serif", size: 14 },
-              bodyFont: { family: "'Inter', sans-serif", size: 13 },
-              padding: 12,
-              cornerRadius: 8,
-              displayColors: false
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              border: { display: false }
-            },
-            x: {
-              border: { display: false }
-            }
-          },
-          interaction: {
-            mode: 'index',
-            intersect: false,
-          },
-        }
-      });
-    }
-
-    function renderSourceChart(sourceData) {
-      const ctxSource = document.getElementById('sourceChart').getContext('2d');
-      
-      if (sourceChartInstance) {
-        sourceChartInstance.destroy();
-      }
-
-      sourceChartInstance = new Chart(ctxSource, {
-        type: 'doughnut',
-        data: {
-          labels: sourceData.countries,
-          datasets: [{
-            data: sourceData.countryValues,
-            backgroundColor: [
-              '#E2FF00', // Accent
-              '#FFFFFF', // White
-              '#9CA3AF', // Gray light
-              '#4B5563', // Gray dark
-              '#1F2937'  // Surface dark
-            ],
-            borderWidth: 0,
-            hoverOffset: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          cutout: '75%',
-          plugins: {
-            legend: {
-              position: 'bottom',
-              labels: {
-                usePointStyle: true,
-                boxWidth: 8,
-                boxHeight: 8,
-                padding: 20
-              }
-            },
-            tooltip: {
-              backgroundColor: 'rgba(0,0,0,0.8)',
-              callbacks: {
-                label: function(context) {
-                  return ` ${context.label}: ${context.raw}`;
-                }
-              }
-            }
-          }
-        }
-      });
-    }
-
     // Load data on page load
-    document.addEventListener('DOMContentLoaded', fetchAnalyticsData);
+    document.addEventListener('DOMContentLoaded', () => fetchAnalyticsData(7));
   </script>
 </body>
 </html>
