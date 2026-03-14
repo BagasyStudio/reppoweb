@@ -16,6 +16,79 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
   
+  <!-- TikTok In-App Browser detection styles -->
+  <style>
+    #tiktok-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.95);
+      z-index: 9999;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 24px;
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      color: white;
+      text-align: center;
+    }
+    #tiktok-overlay.active {
+      display: flex;
+    }
+    .tt-arrow {
+      width: 48px;
+      height: 48px;
+      margin-bottom: 24px;
+      animation: bounceUp 1s infinite;
+      align-self: flex-end;
+      margin-right: 10px;
+    }
+    @keyframes bounceUp {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+    .tt-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      line-height: 1.2;
+      margin-bottom: 16px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    .tt-step {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.15);
+      padding: 16px 20px;
+      border-radius: 16px;
+      width: 100%;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      text-align: left;
+    }
+    .tt-step-num {
+      background: var(--accent, #E2FF00);
+      color: #000;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+    .tt-step-txt {
+      font-size: 15px;
+      color: #FFF;
+      font-weight: 500;
+    }
+  </style>
+
   <style>
     :root {
       --bg: #050505;
@@ -372,6 +445,22 @@
 </head>
 <body>
 
+  <!-- TikTok Overlay -->
+  <div id="tiktok-overlay">
+    <svg class="tt-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5M5 12l7-7 7 7"/></svg>
+    <div class="tt-title" data-i18n="tt_title">Wait! Open in your browser</div>
+    <p style="color: #9CA3AF; margin-bottom: 32px; font-size: 15px;" data-i18n="tt_desc">TikTok blocks App Store downloads. Follow these steps to get the app:</p>
+    
+    <div class="tt-step">
+      <div class="tt-step-num">1</div>
+      <div class="tt-step-txt" data-i18n="tt_step1">Tap the 3 dots (...) in the top right corner</div>
+    </div>
+    <div class="tt-step">
+      <div class="tt-step-num">2</div>
+      <div class="tt-step-txt" data-i18n="tt_step2">Select "Open in Browser" (Safari/Chrome)</div>
+    </div>
+  </div>
+
   <!-- Ambient Glow -->
   <div class="ambient-glow"></div>
 
@@ -388,11 +477,11 @@
       
       <div class="proof-pill">
         <span class="stars">★★★★★</span>
-        <span>Trusted by Aesthetic Athletes</span>
+        <span data-i18n="hero_trusted">Trusted by Aesthetic Athletes</span>
       </div>
 
-      <h1 class="title">Stop guessing.<br>Start ranking.</h1>
-      <p class="subtitle">The first gym tracker combining <strong>AI Body Scans</strong> with a global ranking system. Build momentum and thrive.</p>
+      <h1 class="title" data-i18n="hero_title">Stop guessing.<br>Start ranking.</h1>
+      <p class="subtitle" data-i18n="hero_subtitle">The first gym tracker combining <strong>AI Body Scans</strong> with a global ranking system. Build momentum and thrive.</p>
     </header>
 
     <!-- Interactive Screenshots Carousel -->
@@ -406,56 +495,56 @@
             </div>
           </div>
           <div class="slide-text">
-            <h3>Scan Your Body</h3>
-            <p>Instant precision AI physique score</p>
+            <h3 data-i18n="slide1_title">Scan Your Body</h3>
+            <p data-i18n="slide1_desc">Instant precision AI physique score</p>
           </div>
         </div>
 
         <div class="slide">
           <div class="slide-card">
             <div class="slide-img-wrapper">
-              <img src="460x996bb (1).webp" alt="Track Every Rep" loading="lazy">
+              <img src="460x996bb%20%281%29.webp" alt="Track Every Rep" loading="lazy">
             </div>
           </div>
           <div class="slide-text">
-            <h3>Track Every Rep</h3>
-            <p>Log sets & weights effortlessly</p>
+            <h3 data-i18n="slide2_title">Track Every Rep</h3>
+            <p data-i18n="slide2_desc">Log sets & weights effortlessly</p>
           </div>
         </div>
 
         <div class="slide">
           <div class="slide-card">
             <div class="slide-img-wrapper">
-              <img src="460x996bb (5).webp" alt="Get Ranked" loading="lazy"> <!-- (5) logic applied assuming it's the 3rd or similar -->
+              <img src="460x996bb%20%284%29.webp" alt="Get Ranked" loading="lazy">
             </div>
           </div>
           <div class="slide-text">
-            <h3>Get Ranked</h3>
-            <p>Every workout levels up your fitness</p>
+            <h3 data-i18n="slide3_title">Get Ranked</h3>
+            <p data-i18n="slide3_desc">Every workout levels up your fitness</p>
           </div>
         </div>
 
         <div class="slide">
           <div class="slide-card">
             <div class="slide-img-wrapper">
-              <img src="460x996bb (3).webp" alt="Level Up Your Rank" loading="lazy">
+              <img src="460x996bb%20%283%29.webp" alt="Level Up Your Rank" loading="lazy">
             </div>
           </div>
           <div class="slide-text">
-            <h3>Conquer 13 Ranks</h3>
-            <p>From Bronze to Titan, how high can you go?</p>
+            <h3 data-i18n="slide4_title">Conquer 13 Ranks</h3>
+            <p data-i18n="slide4_desc">From Bronze to Titan, how high can you go?</p>
           </div>
         </div>
 
         <div class="slide">
           <div class="slide-card">
             <div class="slide-img-wrapper">
-              <img src="460x996bb (2).webp" alt="Your AI Coach" loading="lazy">
+              <img src="460x996bb%20%282%29.webp" alt="Your AI Coach" loading="lazy">
             </div>
           </div>
           <div class="slide-text">
-            <h3>Pocket AI Coach</h3>
-            <p>24/7 personal trainer and motivation</p>
+            <h3 data-i18n="slide5_title">Pocket AI Coach</h3>
+            <p data-i18n="slide5_desc">24/7 personal trainer and motivation</p>
           </div>
         </div>
 
@@ -466,31 +555,31 @@
     <div class="features-grid">
       <div class="bento-card wide">
         <div class="bento-icon">🧠</div>
-        <h3 class="bento-title">Smart Muscle Logging</h3>
-        <p class="bento-desc">Custom illustrations, form guides, and highlighted muscles. One tap to repeat your last session.</p>
+        <h3 class="bento-title" data-i18n="feat1_title">Smart Muscle Logging</h3>
+        <p class="bento-desc" data-i18n="feat1_desc">Custom illustrations, form guides, and highlighted muscles. One tap to repeat your last session.</p>
       </div>
       
       <div class="bento-card">
         <div class="bento-icon">⚔️</div>
-        <h3 class="bento-title">Global Ranks</h3>
-        <p class="bento-desc">Compete with friends & athletes worldwide.</p>
+        <h3 class="bento-title" data-i18n="feat2_title">Global Ranks</h3>
+        <p class="bento-desc" data-i18n="feat2_desc">Compete with friends & athletes worldwide.</p>
       </div>
 
       <div class="bento-card">
         <div class="bento-icon">🥩</div>
-        <h3 class="bento-title">AI Diet Plans</h3>
-        <p class="bento-desc">Calculated macros tailored for your precise goals.</p>
+        <h3 class="bento-title" data-i18n="feat3_title">AI Diet Plans</h3>
+        <p class="bento-desc" data-i18n="feat3_desc">Calculated macros tailored for your precise goals.</p>
       </div>
     </div>
 
     <!-- Footer -->
     <footer class="footer">
       <div class="footer-links">
-        <a href="https://sites.google.com/view/reppo/política-de-privacidad-de-reppo" target="_blank">Privacy</a>
-        <a href="https://sites.google.com/view/reppo/terminos-de-reppo" target="_blank">Terms</a>
-        <a href="mailto:hello@reppo.app">Contact</a>
+        <a href="https://sites.google.com/view/reppo/política-de-privacidad-de-reppo" target="_blank" data-i18n="footer_privacy">Privacy</a>
+        <a href="https://sites.google.com/view/reppo/terminos-de-reppo" target="_blank" data-i18n="footer_terms">Terms</a>
+        <a href="mailto:hello@reppo.app" data-i18n="footer_contact">Contact</a>
       </div>
-      <p>© 2026 Reppo. All rights reserved.</p>
+      <p>© 2026 Reppo. <span data-i18n="footer_rights">All rights reserved.</span></p>
     </footer>
 
     <!-- Sticky Bottom CTA (Conversion Focus) -->
@@ -502,17 +591,143 @@
         <svg width="22" height="26" viewBox="0 0 384 512" fill="currentColor">
           <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.1-44.6-35.9-2.8-74.3 22.7-93.1 22.7-18.9 0-46.5-20.9-82.8-20.9-44.5 0-86.8 28.5-110.8 70.3-48 83.2-12.2 206.5 34.6 274.6 22.9 33.3 50.4 70.5 86.6 69.1 34.8-1.5 48-22.3 89.8-22.3 41.6 0 53.6 22.3 89.8 21.6 37.3-.6 61-34.5 83.6-67.6 26.3-38.3 37.1-75.4 37.6-77.4-1.2-.5-61.1-23.4-61.2-80.7zM263.9 88.3c23.6-28.8 39.5-69 35.1-109.3-34.6 1.4-76.3 23-100.2 51.5-20.2 24.1-38 66-32.9 105.3 39 3.1 78.4-20.6 98-47.5z"/>
         </svg>
-        Download App Free
+        <span data-i18n="cta_button">Download App Free</span>
       </a>
       <div class="cta-urgency">
         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-        Available on the App Store <span>• Fast install</span>
+        <span data-i18n="cta_urgency">Available on the App Store • Fast install</span>
       </div>
     </div>
 
   </div>
 
   <script>
+    // Translations Dictionary
+    const translations = {
+      en: {
+        hero_trusted: "Trusted by Aesthetic Athletes",
+        hero_title: "Stop guessing.<br>Start ranking.",
+        hero_subtitle: "The first gym tracker combining <strong>AI Body Scans</strong> with a global ranking system. Build momentum and thrive.",
+        slide1_title: "Scan Your Body",
+        slide1_desc: "Instant precision AI physique score",
+        slide2_title: "Track Every Rep",
+        slide2_desc: "Log sets & weights effortlessly",
+        slide3_title: "Get Ranked",
+        slide3_desc: "Every workout levels up your fitness",
+        slide4_title: "Conquer 13 Ranks",
+        slide4_desc: "From Bronze to Titan, how high can you go?",
+        slide5_title: "Pocket AI Coach",
+        slide5_desc: "24/7 personal trainer and motivation",
+        feat1_title: "Smart Muscle Logging",
+        feat1_desc: "Custom illustrations, form guides, and highlighted muscles. One tap to repeat your last session.",
+        feat2_title: "Global Ranks",
+        feat2_desc: "Compete with friends & athletes worldwide.",
+        feat3_title: "AI Diet Plans",
+        feat3_desc: "Calculated macros tailored for your precise goals.",
+        footer_privacy: "Privacy",
+        footer_terms: "Terms",
+        footer_contact: "Contact",
+        footer_rights: "All rights reserved.",
+        cta_button: "Download App Free",
+        cta_urgency: "Available on the App Store <span>• Fast install</span>",
+        tt_title: "Wait! Open in your browser",
+        tt_desc: "TikTok blocks App Store downloads. Follow these steps to get the app:",
+        tt_step1: "Tap the 3 dots (...) in the top right corner",
+        tt_step2: "Select \"Open in Browser\" (Safari/Chrome)"
+      },
+      es: {
+        hero_trusted: "Elegido por Atletas Aesthetic",
+        hero_title: "Deja de suponer.<br>Empieza a rankear.",
+        hero_subtitle: "El primer tracker de gimnasio que combina <strong>Escáner de Cuerpo IA</strong> con un ranking global. Construye impulso y domina.",
+        slide1_title: "Escanea tu Cuerpo",
+        slide1_desc: "Puntuación IA precisa al instante",
+        slide2_title: "Sigue cada Repetición",
+        slide2_desc: "Registra pesos sin esfuerzo",
+        slide3_title: "Sube de Rango",
+        slide3_desc: "Cada entreno sube tu nivel físico",
+        slide4_title: "Conquista 13 Rangos",
+        slide4_desc: "De Bronce a Titán, ¿hasta dónde llegarás?",
+        slide5_title: "Entrenador IA de Bolsillo",
+        slide5_desc: "Tu propio entrenador y motivación 24/7",
+        feat1_title: "Registro de Músculo Inteligente",
+        feat1_desc: "Ilustraciones interactivas para una técnica perfecta. Repite tus rutinas con un botón.",
+        feat2_title: "Rango Global",
+        feat2_desc: "Compite con amigos y atletas de todo el mundo.",
+        feat3_title: "Dietas con IA",
+        feat3_desc: "Macros calculados a medida para tus metas exactas.",
+        footer_privacy: "Privacidad",
+        footer_terms: "Términos",
+        footer_contact: "Contacto",
+        footer_rights: "Todos los derechos reservados.",
+        cta_button: "Descargar App Gratis",
+        cta_urgency: "Disponible en el App Store <span>• Instalación rápida</span>",
+        tt_title: "¡Espera! Ábrelo en el navegador",
+        tt_desc: "TikTok bloquea las descargas de App Store. Sigue estos pasos:",
+        tt_step1: "Toca los 3 puntitos (...) arriba a la derecha",
+        tt_step2: "Selecciona \"Abrir en el Navegador\" (Safari/Chrome)"
+      },
+      pt: {
+        hero_trusted: "A escolha dos Atletas Aesthetic",
+        hero_title: "Pare de adivinhar.<br>Comece a subir de rank.",
+        hero_subtitle: "O primeiro tracker combinando <strong>Scanning Corporal por IA</strong> com rank global.",
+        slide1_title: "Escaneie Seu Corpo",
+        slide1_desc: "Pontuação precisa do físico por IA",
+        slide2_title: "Acompanhe Cada Repetição",
+        slide2_desc: "Registre pesos sem esforço",
+        slide3_title: "Suba de Rank",
+        slide3_desc: "Cada treino melhora seu nível",
+        slide4_title: "Conquiste 13 Ranks",
+        slide4_desc: "De Bronze a Titã, quão longe você vai?",
+        slide5_title: "Treinador IA de Bolso",
+        slide5_desc: "Motivação e personal trainer 24/7",
+        feat1_title: "Registro Inteligente",
+        feat1_desc: "Guia ilustrado de técnica e músculos. Repita treinos passados com um toque.",
+        feat2_title: "Rank Global",
+        feat2_desc: "Compita com amigos ao redor do mundo.",
+        feat3_title: "Dietas Inteligentes",
+        feat3_desc: "Macros exatos criados com base nos seus objetivos.",
+        footer_privacy: "Privacidade",
+        footer_terms: "Termos",
+        footer_contact: "Contato",
+        footer_rights: "Todos os direitos reservados.",
+        cta_button: "Baixar App Grátis",
+        cta_urgency: "Disponível na App Store <span>• Instalação rápida</span>",
+        tt_title: "Espere! Abra no navegador",
+        tt_desc: "O TikTok bloqueia downloads. Siga estes passos:",
+        tt_step1: "Toque nos 3 pontos (...) no canto superior direito",
+        tt_step2: "Selecione \"Abrir no Navegador\" (Safari/Chrome)"
+      }
+    };
+
+    // Apply translations on load
+    function setLanguage(lang) {
+      if (!translations[lang]) lang = 'en';
+      document.documentElement.lang = lang;
+      
+      const elements = document.querySelectorAll('[data-i18n]');
+      elements.forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        if (translations[lang][key]) {
+          el.innerHTML = translations[lang][key]; 
+        }
+      });
+    }
+
+    // Language Detection
+    const userLang = navigator.language || navigator.userLanguage; 
+    const isSpanish = userLang.toLowerCase().includes('es');
+    const isPortuguese = userLang.toLowerCase().includes('pt');
+    
+    if (isSpanish) setLanguage('es');
+    else if (isPortuguese) setLanguage('pt');
+    else setLanguage('en');
+
+    // TikTok In-App Browser Detection
+    const isTikTok = /Bytedance|TikTok/i.test(navigator.userAgent);
+    if (isTikTok) {
+      document.getElementById('tiktok-overlay').classList.add('active');
+    }
+
     // Psychology: Make the carousel snap exactly on center. 
     // This script ensures they notice it's a gallery they can swipe.
     const container = document.getElementById('gallery');
