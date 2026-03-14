@@ -616,16 +616,27 @@
       <!-- Logged In State (Metrics) -->
       <div id="tiktok-metrics-grid" class="metrics-grid" style="display: none; margin-bottom: 0;">
         <div class="metric-card">
-          <div class="metric-title" data-i18n="tiktok_followers">TikTok Followers</div>
-          <div class="metric-value" id="val-tk-followers">--</div>
+          <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div class="metric-title" style="margin-bottom: 0;"><i class="fab fa-tiktok" style="color: #E2FF00; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_followers">TikTok Followers</span></div>
+            <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(226, 255, 0, 0.15); color: #E2FF00; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-circle" style="font-size: 6px; margin-right: 4px; vertical-align: middle; animation: pulse 2s infinite;"></i> Live</span>
+          </div>
+          <div class="metric-value" id="val-tk-followers" style="font-size: 2.2rem;">--</div>
         </div>
+        
         <div class="metric-card">
-          <div class="metric-title" data-i18n="tiktok_likes">Total Likes</div>
-          <div class="metric-value" id="val-tk-likes">--</div>
+          <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div class="metric-title" style="margin-bottom: 0;"><i class="fas fa-heart" style="color: #ff2a5f; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_likes">Total Likes</span></div>
+            <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(255, 42, 95, 0.15); color: #ff2a5f; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-fire" style="margin-right: 4px;"></i> Hot</span>
+          </div>
+          <div class="metric-value" id="val-tk-likes" style="font-size: 2.2rem;">--</div>
         </div>
+
         <div class="metric-card">
-          <div class="metric-title" data-i18n="tiktok_views">Estimated Views</div>
-          <div class="metric-value" id="val-tk-views">--</div>
+          <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+            <div class="metric-title" style="margin-bottom: 0;"><i class="fas fa-eye" style="color: #00f2fe; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_views">Estimated Views</span></div>
+            <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(0, 242, 254, 0.15); color: #00f2fe; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-chart-bar" style="margin-right: 4px;"></i> All Time</span>
+          </div>
+          <div class="metric-value" id="val-tk-views" style="font-size: 2.2rem;">--</div>
         </div>
       </div>
 

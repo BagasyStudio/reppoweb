@@ -63,7 +63,7 @@ export default async function handler(req, res) {
         published_videos: userData.data.user.video_count || 0,
         estimated_total_views: totalViews,
       },
-      recent_videos: videosArray
+      videos: videosArray
     };
 
     return res.status(200).json(dashboardStats);
