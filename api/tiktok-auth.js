@@ -1,8 +1,8 @@
 // api/tiktok-auth.js
 
 export default async function handler(req, res) {
-  // Use environment variables for the credentials
-  const clientKey = process.env.TIKTOK_CLIENT_KEY || 'sbawrrb6mhjjbmdqnm';
+  const envKey = (process.env.TIKTOK_CLIENT_KEY || '').trim().replace(/['"]/g, '');
+  const clientKey = envKey || 'sbawrrb6mhjjbmdqnm';
   
   // Determine dynamically the host to support testing locally vs production
   const scheme = req.headers.host.includes('localhost') ? 'http' : 'https';

@@ -20,8 +20,11 @@ export default async function handler(req, res) {
   }
 
   // Get environment variables or use the Sandbox credentials we just created
-  const clientKey = process.env.TIKTOK_CLIENT_KEY || 'sbawrrb6mhjjbmdqnm';
-  const clientSecret = process.env.TIKTOK_CLIENT_SECRET || 'aRMKC5nRPZmBwUY4bXCxCKdMy0GYh9IL';
+  const envKey = (process.env.TIKTOK_CLIENT_KEY || '').trim().replace(/['"]/g, '');
+  const clientKey = envKey || 'sbawrrb6mhjjbmdqnm';
+  
+  const envSecret = (process.env.TIKTOK_CLIENT_SECRET || '').trim().replace(/['"]/g, '');
+  const clientSecret = envSecret || 'aRMKC5nRPZmBwUY4bXCxCKdMy0GYh9IL';
 
   const scheme = req.headers.host.includes('localhost') ? 'http' : 'https';
   const redirectUri = `${scheme}://${req.headers.host}/api/tiktok-callback`;
