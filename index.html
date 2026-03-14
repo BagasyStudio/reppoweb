@@ -1,448 +1,531 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <title>Reppo: Ranked Workout Tracker</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Reppo | The Ranked Workout Tracker</title>
   
-  <!-- SEO & Social Sharing -->
-  <meta name="description" content="Reppo helps you track your gym strength, get your AI Body Score, and climb the ranks. Reset. Gain Momentum. Thrive." />
-  
-  <meta property="og:title" content="Reppo: Ranked Workout Tracker" />
-  <meta property="og:description" content="Gym Strength & AI Body Score. Track your progress without overcomplicating it." />
-  
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="/favicon.ico">
-  
-  <!-- Font -->
+  <meta name="description" content="Discover your physique score with AI, log every rep, and climb the global ranks. Elite fitness tracking, game-over for guesswork.">
+  <meta property="og:title" content="Reppo | Ranked Workout Tracker">
+  <meta property="og:description" content="Gym Strength & AI Body Score. Track your progress, level up your rank.">
+  <meta name="theme-color" content="#050505">
+  <link rel="icon" type="image/png" href="logo.png">
+
+  <!-- Outfit Font for Premium Tech Look -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
-  
-  <!-- Tracking Code Setup (Google Analytics / Pixel goes here) -->
-  <!-- Example:
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
-  <script>
-    window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-XXXXXXXXXX');
-  </script>
-  -->
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Outfit:wght@500;700;800;900&display=swap" rel="stylesheet">
   
   <style>
     :root {
-      --bg-color: #0d0d0d;
-      --text-main: #ffffff;
-      --text-muted: #a1a1aa;
-      --accent: #22c55e;
-      --card-bg: #1a1a1a;
-      --font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --bg: #050505;
+      --surface: #121212;
+      --surface-border: rgba(255, 255, 255, 0.08);
+      --accent: #E2FF00; /* Neon Lime/Yellow */
+      --accent-glow: rgba(226, 255, 0, 0.4);
+      --text-prime: #ffffff;
+      --text-sec: #9CA3AF;
+      
+      --font-display: 'Outfit', sans-serif;
+      --font-body: 'Inter', sans-serif;
+      --transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    
+    html { scroll-behavior: smooth; }
 
     body {
-      background-color: var(--bg-color);
-      color: var(--text-main);
-      font-family: var(--font-family);
-      line-height: 1.5;
+      background-color: var(--bg);
+      color: var(--text-prime);
+      font-family: var(--font-body);
+      -webkit-font-smoothing: antialiased;
       display: flex;
       justify-content: center;
+      overflow-x: hidden;
+      /* Subtle noise texture */
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.02'/%3E%3C/svg%3E");
     }
 
-    /* Mobile Container Optimization */
+    /* Floating Orbs for Ambient Glow */
+    .ambient-glow {
+      position: fixed;
+      width: 300px;
+      height: 300px;
+      background: var(--accent);
+      filter: blur(120px);
+      border-radius: 50%;
+      opacity: 0.15;
+      pointer-events: none;
+      z-index: 0;
+      top: -100px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
     .mobile-container {
       width: 100%;
-      max-width: 480px; /* Constrain for desktop so it always looks like a mobile page */
+      max-width: 480px; 
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       position: relative;
+      z-index: 1;
+      padding-bottom: 120px; /* Space for sticky CTA */
     }
 
-    /* Hero Section */
+    /* -- HERO SECTION -- */
     .hero {
+      padding: 64px 24px 32px;
+      text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
-      text-align: center;
-      padding: 60px 24px 40px;
+      animation: fadeUp 0.8s ease-out forwards;
+    }
+
+    .app-icon-wrap {
+      position: relative;
+      margin-bottom: 24px;
     }
 
     .app-icon {
-      width: 120px;
-      height: 120px;
-      border-radius: 28px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4), inset 0 1px 1px rgba(255, 255, 255, 0.1);
-      margin-bottom: 32px;
+      width: 104px;
+      height: 104px;
+      border-radius: 24px;
+      box-shadow: 0 16px 32px rgba(0,0,0,0.6), inset 0 2px 2px rgba(255,255,255,0.15);
       overflow: hidden;
+      border: 1px solid var(--surface-border);
+      position: relative;
+      z-index: 2;
     }
-
-    .app-icon img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
+    .app-icon img { width: 100%; height: 100%; object-fit: cover; }
+    
+    /* Icon back-glow */
+    .app-icon-glow {
+      position: absolute;
+      inset: 0;
+      background: var(--accent);
+      filter: blur(25px);
+      opacity: 0.4;
+      z-index: 1;
+      border-radius: 30px;
     }
 
     .title {
-      font-size: 28px;
-      font-weight: 700;
-      letter-spacing: -0.5px;
+      font-family: var(--font-display);
+      font-size: 40px;
+      font-weight: 800;
+      line-height: 1.05;
+      letter-spacing: -0.04em;
       margin-bottom: 12px;
+      background: linear-gradient(180deg, #FFFFFF 0%, #A1A1AA 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .subtitle {
-      font-size: 18px;
-      font-weight: 600;
-      color: var(--text-main);
-      margin-bottom: 32px;
+      font-size: 17px;
+      color: var(--text-sec);
+      line-height: 1.4;
+      max-width: 90%;
+      margin: 0 auto 24px;
     }
 
-    /* App Store Button */
-    .download-btn {
+    /* Social Proof Pill */
+    .proof-pill {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-      background-color: #000;
-      color: #fff;
-      border: 1px solid #333;
-      border-radius: 12px;
-      padding: 10px 20px;
-      text-decoration: none;
-      transition: all 0.2s ease;
-      cursor: pointer;
+      gap: 8px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.08);
+      padding: 6px 14px;
+      border-radius: 100px;
+      font-size: 13px;
+      font-weight: 500;
+      color: #FFF;
+      backdrop-filter: blur(10px);
+      margin-bottom: 32px;
     }
-    
-    .download-btn:hover {
-      background-color: #111;
-      border-color: #555;
-    }
-    
-    .download-btn:active {
-      transform: scale(0.97);
+    .stars { color: var(--accent); font-size: 14px; letter-spacing: 1px;}
+
+    /* -- SCREENSHOTS CAROUSEL -- */
+    .carousel-section {
+      width: 100%;
+      position: relative;
+      margin-bottom: 48px;
     }
 
-    .download-btn svg {
-      width: 24px;
-      height: 24px;
-      margin-right: 12px;
-      fill: currentColor;
-    }
-
-    .btn-text {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-start;
-    }
-
-    .btn-small-text {
-      font-size: 10px;
-      line-height: 1;
-      margin-bottom: 2px;
-    }
-
-    .btn-large-text {
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1;
-    }
-
-    /* Divider */
-    .divider {
-      height: 1px;
-      background: #333;
-      margin: 0 24px;
-    }
-
-    /* Content Sections */
-    .section {
-      padding: 40px 24px;
-    }
-
-    .section-title {
-      font-size: 18px;
-      font-weight: 700;
-      text-transform: uppercase;
-      margin-bottom: 24px;
-      letter-spacing: 0.5px;
-    }
-
-    /* Screenshots Scroll */
-    .screenshots-scroll {
+    .carousel-container {
       display: flex;
       overflow-x: auto;
       scroll-snap-type: x mandatory;
       gap: 16px;
-      padding: 0 24px 40px;
-      scrollbar-width: none; /* Firefox */
-      margin-top: 24px;
+      padding: 0 24px 24px;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
     }
-    
-    .screenshots-scroll::-webkit-scrollbar {
-      display: none; /* Chrome/Safari */
+    .carousel-container::-webkit-scrollbar { display: none; }
+
+    .slide {
+      flex: 0 0 calc(75%); /* Peeking next slide to encourage scroll */
+      scroll-snap-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      animation: fadeUp 0.8s ease-out 0.2s backwards;
     }
 
-    .screenshot {
-      flex: 0 0 calc(100% - 48px);
-      max-width: 280px;
+    .slide-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 28px;
+      padding: 6px;
+      position: relative;
+      box-shadow: 0 24px 40px rgba(0,0,0,0.5);
+    }
+    
+    .slide-img-wrapper {
+      border-radius: 22px;
+      overflow: hidden;
       aspect-ratio: 9/19.5;
-      background-color: var(--card-bg);
+      background: #000;
+      position: relative;
+    }
+    .slide-img-wrapper::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.1);
+      border-radius: 22px;
+      pointer-events: none;
+    }
+
+    .slide img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform: scale(1.02); /* covers tiny pixel gaps */
+    }
+
+    .slide-text {
+      text-align: center;
+    }
+    .slide-text h3 {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      margin-bottom: 4px;
+    }
+    .slide-text p {
+      font-size: 14px;
+      color: var(--text-sec);
+    }
+
+    /* -- PREMIUM BENTO GRID -- */
+    .features-grid {
+      padding: 0 24px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+      margin-bottom: 48px;
+    }
+
+    .bento-card {
+      background: linear-gradient(145deg, rgba(255,255,255,0.03) 0%, rgba(255,255,255,0.01) 100%);
+      border: 1px solid var(--surface-border);
       border-radius: 20px;
-      scroll-snap-align: center;
-      border: 1px solid #222;
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      min-height: 140px;
+      position: relative;
+      overflow: hidden;
+    }
+    .bento-card.wide {
+      grid-column: span 2;
+    }
+    
+    /* Card internal glowing gradient */
+    .bento-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: radial-gradient(circle at top right, rgba(226, 255, 0, 0.05), transparent 60%);
+      pointer-events: none;
+    }
+
+    .bento-icon {
+      font-size: 24px;
+      margin-bottom: auto;
+      color: var(--accent);
+    }
+
+    .bento-title {
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 18px;
+      line-height: 1.2;
+      margin-bottom: 6px;
+    }
+    .bento-desc {
+      font-size: 13px;
+      color: var(--text-sec);
+      line-height: 1.4;
+    }
+
+    /* -- STICKY BOTTOM CTA (Conversion Driver) -- */
+    .sticky-cta {
+      position: fixed;
+      bottom: 0px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 100%;
+      max-width: 480px;
+      padding: 16px 24px 32px;
+      background: linear-gradient(0deg, rgba(0,0,0,0.9) 0%, rgba(0,0,0,0.6) 70%, transparent 100%);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      z-index: 100;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 24px;
-      text-align: center;
+    }
+
+    .cta-btn {
+      width: 100%;
+      background: var(--accent);
+      color: #000;
+      border: none;
+      border-radius: 16px;
+      padding: 18px 24px;
+      font-family: var(--font-display);
+      font-size: 19px;
+      font-weight: 800;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 8px 20px var(--accent-glow);
+      transition: var(--transition);
+      cursor: pointer;
       position: relative;
       overflow: hidden;
     }
 
-    .screenshot-headline {
-      font-size: 22px;
-      font-weight: 700;
-      margin-bottom: 8px;
-    }
-
-    /* Mock Phone Frame */
-    .phone-mock {
-      width: 100%;
-      height: 100%;
-      background: #000;
-      border-radius: 24px;
-      border: 4px solid #333;
-      margin-top: 24px;
-      position: relative;
-    }
-    .phone-mock::before {
+    /* Shimmer effect on button */
+    .cta-btn::after {
       content: '';
       position: absolute;
-      top: 0;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 40%;
-      height: 12px;
-      background: #333;
-      border-bottom-left-radius: 8px;
-      border-bottom-right-radius: 8px;
+      top: 0; left: -100%; width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+      animation: shimmer 3s infinite;
     }
 
-    /* Lists */
-    ol, ul {
-      padding-left: 20px;
-      margin-bottom: 24px;
-    }
-
-    li {
-      margin-bottom: 12px;
-      font-size: 16px;
-      color: #e5e5e5;
-    }
-
-    li:last-child {
-      margin-bottom: 0;
-    }
-
-    .description-text {
-      font-size: 16px;
-      color: #e5e5e5;
-      margin-bottom: 24px;
+    .cta-btn:active {
+      transform: scale(0.96);
+      box-shadow: 0 4px 10px var(--accent-glow);
     }
     
-    .description-text.bold {
-      font-weight: 600;
-      color: white;
+    .cta-urgency {
+      margin-top: 12px;
+      font-size: 12px;
+      color: #888;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 6px;
     }
+    .cta-urgency span { color: var(--accent); }
 
     /* Footer */
     .footer {
-      padding: 40px 24px;
-      font-size: 14px;
-      color: var(--text-muted);
-      border-top: 1px solid #222;
-      margin-top: auto;
+      padding: 0 24px 40px;
+      text-align: center;
+      font-size: 12px;
+      color: #555;
     }
-
-    .footer p {
-      margin-bottom: 16px;
-    }
-
-    .footer a {
-      color: var(--text-muted);
-      text-decoration: none;
-    }
-
-    .footer a:hover {
-      color: white;
-      text-decoration: underline;
-    }
-
+    .footer a { color: #777; text-decoration: none; transition: color 0.2s;}
+    .footer a:hover { color: #FFF; }
     .footer-links {
       display: flex;
       justify-content: center;
       gap: 16px;
-      margin: 32px 0 24px;
+      margin-bottom: 16px;
     }
 
-    .copyright {
-      text-align: center;
-      font-size: 12px;
+    /* Animations */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    
+    @keyframes shimmer {
+      0% { left: -100%; }
+      20% { left: 200%; }
+      100% { left: 200%; }
     }
   </style>
 </head>
 <body>
 
+  <!-- Ambient Glow -->
+  <div class="ambient-glow"></div>
+
   <div class="mobile-container">
     
     <!-- Hero Section -->
     <header class="hero">
-      <div class="app-icon">
-        <img src="logo.png" alt="Reppo Logo">
-      </div>
-      <h1 class="title">Reppo: Ranked Workout Tracker</h1>
-      <p class="subtitle">Reset. Gain Momentum. Thrive.</p>
-      
-      <!-- App Store Button with Click Event Tracking -->
-      <a href="https://apps.apple.com/pk/app/reppo-ranked-workout-tracker/id6759114597" 
-         class="download-btn" 
-         id="appStoreTrackLink"
-         target="_blank" 
-         rel="noopener noreferrer"
-         onclick="trackAppStoreClick()">
-        <svg viewBox="0 0 384 512">
-          <!-- Apple Logo SVG -->
-          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.1-44.6-35.9-2.8-74.3 22.7-93.1 22.7-18.9 0-46.5-20.9-82.8-20.9-44.5 0-86.8 28.5-110.8 70.3-48 83.2-12.2 206.5 34.6 274.6 22.9 33.3 50.4 70.5 86.6 69.1 34.8-1.5 48-22.3 89.8-22.3 41.6 0 53.6 22.3 89.8 21.6 37.3-.6 61-34.5 83.6-67.6 26.3-38.3 37.1-75.4 37.6-77.4-1.2-.5-61.1-23.4-61.2-80.7zM263.9 88.3c23.6-28.8 39.5-69 35.1-109.3-34.6 1.4-76.3 23-100.2 51.5-20.2 24.1-38 66-32.9 105.3 39 3.1 78.4-20.6 98-47.5z"/>
-        </svg>
-        <div class="btn-text">
-          <span class="btn-small-text">Download on the</span>
-          <span class="btn-large-text">App Store</span>
+      <div class="app-icon-wrap">
+        <div class="app-icon-glow"></div>
+        <div class="app-icon">
+          <img src="logo.png" alt="Reppo Logo">
         </div>
-      </a>
+      </div>
+      
+      <div class="proof-pill">
+        <span class="stars">★★★★★</span>
+        <span>Trusted by Aesthetic Athletes</span>
+      </div>
+
+      <h1 class="title">Stop guessing.<br>Start ranking.</h1>
+      <p class="subtitle">The first gym tracker combining <strong>AI Body Scans</strong> with a global ranking system. Build momentum and thrive.</p>
     </header>
 
-    <div class="divider"></div>
+    <!-- Interactive Screenshots Carousel -->
+    <div class="carousel-section">
+      <div class="carousel-container" id="gallery">
+        
+        <div class="slide">
+          <div class="slide-card">
+            <div class="slide-img-wrapper">
+              <img src="460x996bb.webp" alt="Scan Your Body With AI" loading="lazy">
+            </div>
+          </div>
+          <div class="slide-text">
+            <h3>Scan Your Body</h3>
+            <p>Instant precision AI physique score</p>
+          </div>
+        </div>
 
-    <!-- Screenshots -->
-    <div class="section-title" style="margin: 40px 24px -10px;">Screenshots</div>
-    <div class="screenshots-scroll">
-      <!-- Screenshot 1 -->
-      <div class="screenshot">
-        <div class="screenshot-headline">Scan Your Body With AI</div>
-        <div class="phone-mock">
-          <img src="460x996bb.webp" alt="Scan Your Body With AI" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+        <div class="slide">
+          <div class="slide-card">
+            <div class="slide-img-wrapper">
+              <img src="460x996bb (1).webp" alt="Track Every Rep" loading="lazy">
+            </div>
+          </div>
+          <div class="slide-text">
+            <h3>Track Every Rep</h3>
+            <p>Log sets & weights effortlessly</p>
+          </div>
         </div>
-      </div>
-      <!-- Screenshot 2 -->
-      <div class="screenshot">
-        <div class="screenshot-headline">Track Every Rep</div>
-        <div class="phone-mock" style="border-color: #444;">
-          <img src="460x996bb (1).webp" alt="Track Every Rep" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+
+        <div class="slide">
+          <div class="slide-card">
+            <div class="slide-img-wrapper">
+              <img src="460x996bb (5).webp" alt="Get Ranked" loading="lazy"> <!-- (5) logic applied assuming it's the 3rd or similar -->
+            </div>
+          </div>
+          <div class="slide-text">
+            <h3>Get Ranked</h3>
+            <p>Every workout levels up your fitness</p>
+          </div>
         </div>
-      </div>
-      <!-- Screenshot 3 -->
-      <div class="screenshot">
-        <div class="screenshot-headline">Your AI Coach</div>
-        <div class="phone-mock" style="border-color: #444;">
-          <img src="460x996bb (2).webp" alt="Your AI Coach" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+
+        <div class="slide">
+          <div class="slide-card">
+            <div class="slide-img-wrapper">
+              <img src="460x996bb (3).webp" alt="Level Up Your Rank" loading="lazy">
+            </div>
+          </div>
+          <div class="slide-text">
+            <h3>Conquer 13 Ranks</h3>
+            <p>From Bronze to Titan, how high can you go?</p>
+          </div>
         </div>
-      </div>
-      <!-- Screenshot 4 -->
-      <div class="screenshot">
-        <div class="screenshot-headline">Level Up Your Rank</div>
-        <div class="phone-mock" style="border-color: #444;">
-          <img src="460x996bb (3).webp" alt="Level Up Your Rank" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
+
+        <div class="slide">
+          <div class="slide-card">
+            <div class="slide-img-wrapper">
+              <img src="460x996bb (2).webp" alt="Your AI Coach" loading="lazy">
+            </div>
+          </div>
+          <div class="slide-text">
+            <h3>Pocket AI Coach</h3>
+            <p>24/7 personal trainer and motivation</p>
+          </div>
         </div>
-      </div>
-      <!-- Screenshot 5 -->
-      <div class="screenshot">
-        <div class="screenshot-headline">Get Ranked</div>
-        <div class="phone-mock" style="border-color: #444;">
-          <img src="460x996bb (4).webp" alt="Get Ranked" style="width: 100%; height: 100%; object-fit: cover; border-radius: 20px;">
-        </div>
+
       </div>
     </div>
 
-    <div class="divider"></div>
-
-    <!-- How to use -->
-    <section class="section">
-      <h2 class="section-title">HOW TO USE REPPO:</h2>
-      <ol>
-        <li>Answer lifestyle questions to build your optimal workout routine.</li>
-        <li>Log your sets, weights, and reps seamlessly at the gym.</li>
-        <li>Complete workouts, capture proof (optional), and watch your AI Body Score increase.*</li>
-      </ol>
-      <p class="description-text">Reppo helps you see the progress in your gym performance without overcomplicating it.</p>
-    </section>
-
-    <!-- Features -->
-    <section class="section" style="padding-top: 0;">
-      <p class="description-text">Show up each day, crush your workouts (with or without photos), build your streaks, and look back at how much strength you've gained.</p>
+    <!-- Premium Features Bento -->
+    <div class="features-grid">
+      <div class="bento-card wide">
+        <div class="bento-icon">🧠</div>
+        <h3 class="bento-title">Smart Muscle Logging</h3>
+        <p class="bento-desc">Custom illustrations, form guides, and highlighted muscles. One tap to repeat your last session.</p>
+      </div>
       
-      <p class="description-text bold">What you can do with Reppo:</p>
-      <ul>
-        <li>Log and track custom workout routines effortlessly</li>
-        <li>Get your personalized AI Body Score based on authentic gym strength</li>
-        <li>Climb global and local ranks and compare your strength</li>
-        <li>Add photos as "proof" to document your physique transformation</li>
-      </ul>
+      <div class="bento-card">
+        <div class="bento-icon">⚔️</div>
+        <h3 class="bento-title">Global Ranks</h3>
+        <p class="bento-desc">Compete with friends & athletes worldwide.</p>
+      </div>
 
-      <p class="description-text bold">See real progress you can look back on.</p>
-    </section>
+      <div class="bento-card">
+        <div class="bento-icon">🥩</div>
+        <h3 class="bento-title">AI Diet Plans</h3>
+        <p class="bento-desc">Calculated macros tailored for your precise goals.</p>
+      </div>
+    </div>
 
     <!-- Footer -->
     <footer class="footer">
-      <p>Questions or feature ideas? Contact us at:<br><a href="mailto:hello@reppo.app">hello@reppo.app</a></p>
-      
-      <p>SUBSCRIPTION REQUIRED: Reppo requires a subscription to access premium features. Subscription options and pricing are displayed in the app.</p>
-      
-      <p>*PREMIUM FEATURES REQUIRE A SUBSCRIPTION.</p>
-      
-      <p>TERMS: <a href="https://www.apple.com/legal/internet-services/itunes/dev/stdeula/" target="_blank" rel="noopener">https://www.apple.com/legal/internet-services/itunes/dev/stdeula/</a></p>
-      
       <div class="footer-links">
-        <a href="#">Privacy</a>
-        <a href="#">Terms</a>
+        <a href="https://sites.google.com/view/reppo/política-de-privacidad-de-reppo" target="_blank">Privacy</a>
+        <a href="https://sites.google.com/view/reppo/terminos-de-reppo" target="_blank">Terms</a>
+        <a href="mailto:hello@reppo.app">Contact</a>
       </div>
-      
-      <div class="copyright">
-        ©2026 Bautista Moran • All rights reserved.
-      </div>
+      <p>© 2026 Bautista Moran. All rights reserved.</p>
     </footer>
+
+    <!-- Sticky Bottom CTA (Conversion Focus) -->
+    <div class="sticky-cta">
+      <a href="https://apps.apple.com/pk/app/reppo-ranked-workout-tracker/id6759114597" 
+         class="cta-btn" 
+         onclick="trackConversion()">
+        <!-- Apple Icon SVG minimal -->
+        <svg width="22" height="26" viewBox="0 0 384 512" fill="currentColor">
+          <path d="M318.7 268.7c-.2-36.7 16.4-64.4 50-84.8-18.8-26.9-47.2-41.7-84.1-44.6-35.9-2.8-74.3 22.7-93.1 22.7-18.9 0-46.5-20.9-82.8-20.9-44.5 0-86.8 28.5-110.8 70.3-48 83.2-12.2 206.5 34.6 274.6 22.9 33.3 50.4 70.5 86.6 69.1 34.8-1.5 48-22.3 89.8-22.3 41.6 0 53.6 22.3 89.8 21.6 37.3-.6 61-34.5 83.6-67.6 26.3-38.3 37.1-75.4 37.6-77.4-1.2-.5-61.1-23.4-61.2-80.7zM263.9 88.3c23.6-28.8 39.5-69 35.1-109.3-34.6 1.4-76.3 23-100.2 51.5-20.2 24.1-38 66-32.9 105.3 39 3.1 78.4-20.6 98-47.5z"/>
+        </svg>
+        Download App Free
+      </a>
+      <div class="cta-urgency">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+        Available on the App Store <span>• Fast install</span>
+      </div>
+    </div>
 
   </div>
 
   <script>
-    // Click Tracking Logic
-    // This function will seamlessly handle tracking before directing the user to the App Store.
-    function trackAppStoreClick() {
-      // 1. Log to console for debugging
-      console.log("App Store button clicked!");
-
-      // 2. Track with Google Analytics (if using gtag.js)
+    // Psychology: Make the carousel snap exactly on center. 
+    // This script ensures they notice it's a gallery they can swipe.
+    const container = document.getElementById('gallery');
+    
+    // Simple click event for analytics
+    function trackConversion() {
+      console.log('Conversion CTA Clicked!');
       if (typeof gtag === 'function') {
-        gtag('event', 'click_appstore', {
-          'event_category': 'conversion',
-          'event_label': 'App Store Download',
-          'value': 1
-        });
+        gtag('event', 'conversion_click', { 'event_category': 'CTA', 'value': 1 });
       }
-
-      // 3. Track with Meta Pixel (if using fbp.js)
       if (typeof fbq === 'function') {
-        fbq('trackCustom', 'ClickAppStoreCTA');
+        fbq('track', 'Lead');
       }
-
-      // To ensure tracking fires, the link's native href handles the navigation. 
-      // This is a simple non-blocking approach.
     }
   </script>
 
