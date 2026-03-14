@@ -156,6 +156,15 @@
       box-shadow: 0 0 8px var(--accent-glow);
       animation: pulse 2s infinite;
     }
+    .live-dot.inactive {
+      background-color: var(--text-sec);
+      box-shadow: none;
+      animation: none;
+    }
+    .subtitle-live-text.active {
+      color: var(--accent);
+      font-weight: 500;
+    }
 
     /* Metric Cards Grid */
     .metrics-grid {
@@ -322,8 +331,8 @@
       <div class="header-text">
         <h1 class="title">Metrics / Reppo</h1>
         <div class="subtitle">
-          <div class="live-dot"></div>
-          Live Data Overview
+          <div class="live-dot" id="live-dot"></div>
+          <span id="live-text" class="subtitle-live-text">Live Data Overview</span>
         </div>
       </div>
       
@@ -668,8 +677,37 @@
       });
     });
 
+    async function fetchRealtimeActiveUsers() {
+      try {
+        const res = await fetch('/api/analytics?realtime=true');
+        if (res.ok) {
+          const data = await res.json();
+          const count = data.activeUsers || 0;
+          const textEl = document.getElementById('live-text');
+          const dotEl = document.getElementById('live-dot');
+          
+          if (count > 0) {
+            textEl.innerText = `${count} Active User${count !== 1 ? 's' : ''} Right Now`;
+            textEl.classList.add('active');
+            dotEl.classList.remove('inactive');
+          } else {
+            textEl.innerText = '0 Active Users right now';
+            textEl.classList.remove('active');
+            dotEl.classList.add('inactive');
+          }
+        }
+      } catch (e) {
+        console.error('Error fetching realtime users:', e);
+      }
+    }
+
     // Load data on page load
-    document.addEventListener('DOMContentLoaded', () => fetchAnalyticsData(7));
+    document.addEventListener('DOMContentLoaded', () => {
+      fetchAnalyticsData(7);
+      fetchRealtimeActiveUsers();
+      // Poll real-time active users every 15 seconds
+      setInterval(fetchRealtimeActiveUsers, 15000);
+    });
   </script>
 </body>
 </html>

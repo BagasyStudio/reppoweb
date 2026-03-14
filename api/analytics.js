@@ -34,6 +34,26 @@ export default async function handler(req, res) {
     return;
   }
 
+  // Handle Realtime Request
+  if (req.query.realtime === 'true') {
+    try {
+      const [response] = await analyticsDataClient.runRealtimeReport({
+        property: `properties/${propertyId}`,
+        metrics: [{ name: 'activeUsers' }]
+      });
+      const activeUsers = response.rows && response.rows.length > 0 
+        ? parseInt(response.rows[0].metricValues[0].value, 10) 
+        : 0;
+      
+      res.status(200).json({ activeUsers });
+      return;
+    } catch (error) {
+      console.error('Error fetching realtime analytics data:', error);
+      res.status(500).json({ error: 'Failed to fetch realtime data' });
+      return;
+    }
+  }
+
   try {
     // Determine the date range from the query parameters, default to 7 days
     const queryDays = req.query.days ? parseInt(req.query.days, 10) : 7;
