@@ -332,153 +332,177 @@
     Chart.defaults.scale.grid.color = 'rgba(255, 255, 255, 0.05)';
     Chart.defaults.scale.grid.tickColor = 'rgba(255, 255, 255, 0)';
 
-    // Mock Data for Design Implementation
-    // Later this will be replaced by a fetch to our Vercel Serverless Function
-    const mockData = {
-      dates: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
-      visits: [120, 190, 300, 250, 400, 450, 520],
-      clicks: [40, 60, 110, 90, 150, 180, 210],
-      countries: ['United States', 'Spain', 'Mexico', 'Argentina', 'Other'],
-      countryValues: [45, 20, 15, 10, 10]
-    };
+    let mainChartInstance = null;
+    let sourceChartInstance = null;
 
-    // Calculate mock totals
-    const totalVisits = mockData.visits.reduce((a, b) => a + b, 0);
-    const totalClicks = mockData.clicks.reduce((a, b) => a + b, 0);
-    const cvr = ((totalClicks / totalVisits) * 100).toFixed(1);
+    async function fetchAnalyticsData() {
+      try {
+        const response = await fetch('/api/analytics');
+        if (!response.ok) {
+          throw new Error('Network response was not ok');
+        }
+        const data = await response.json();
+        
+        // Calculate totals
+        const totalVisits = data.daily.visits.reduce((a, b) => a + Number(b), 0);
+        const totalClicks = data.daily.clicks.reduce((a, b) => a + Number(b), 0);
+        const cvr = totalVisits > 0 ? ((totalClicks / totalVisits) * 100).toFixed(1) : "0.0";
 
-    // Update UI manually for now
-    document.getElementById('val-visits').innerHTML = `${totalVisits} <span class="metric-trend">+14%</span>`;
-    document.getElementById('val-clicks').innerHTML = `${totalClicks} <span class="metric-trend">+22%</span>`;
-    document.getElementById('val-conversion').innerHTML = `${cvr}%`;
+        // Update UI
+        document.getElementById('val-visits').innerHTML = `${totalVisits} <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">7 Days</span>`;
+        document.getElementById('val-clicks').innerHTML = `${totalClicks} <span class="metric-trend" style="color:#FFF; background:rgba(255,255,255,0.1)">7 Days</span>`;
+        document.getElementById('val-conversion').innerHTML = `${cvr}%`;
 
-    // Initialize Main Line Chart (Visits vs Clicks)
-    const ctxMain = document.getElementById('mainChart').getContext('2d');
-    
-    // Create gradient for the line
-    const gradientVisits = ctxMain.createLinearGradient(0, 0, 0, 300);
-    gradientVisits.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
-    gradientVisits.addColorStop(1, 'rgba(255, 255, 255, 0)');
-
-    const gradientClicks = ctxMain.createLinearGradient(0, 0, 0, 300);
-    gradientClicks.addColorStop(0, 'rgba(226, 255, 0, 0.4)');
-    gradientClicks.addColorStop(1, 'rgba(226, 255, 0, 0)');
-
-    new Chart(ctxMain, {
-      type: 'line',
-      data: {
-        labels: mockData.dates,
-        datasets: [
-          {
-            label: 'Download Clicks',
-            data: mockData.clicks,
-            borderColor: '#E2FF00',
-            backgroundColor: gradientClicks,
-            borderWidth: 3,
-            tension: 0.4,
-            fill: true,
-            pointBackgroundColor: '#121212',
-            pointBorderColor: '#E2FF00',
-            pointBorderWidth: 2,
-            pointRadius: 4,
-            pointHoverRadius: 6
-          },
-          {
-            label: 'Page Visits',
-            data: mockData.visits,
-            borderColor: '#FFFFFF',
-            backgroundColor: gradientVisits,
-            borderWidth: 2,
-            borderDash: [5, 5],
-            tension: 0.4,
-            fill: true,
-            pointRadius: 0,
-            pointHoverRadius: 0
-          }
-        ]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        plugins: {
-          legend: {
-            position: 'top',
-            align: 'end',
-            labels: {
-              usePointStyle: true,
-              boxWidth: 8,
-              boxHeight: 8
-            }
-          },
-          tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            titleFont: { family: "'Outfit', sans-serif", size: 14 },
-            bodyFont: { family: "'Inter', sans-serif", size: 13 },
-            padding: 12,
-            cornerRadius: 8,
-            displayColors: false
-          }
-        },
-        scales: {
-          y: {
-            beginAtZero: true,
-            border: { display: false }
-          },
-          x: {
-            border: { display: false }
-          }
-        },
-        interaction: {
-          mode: 'index',
-          intersect: false,
-        },
+        // Render Charts
+        renderMainChart(data.daily);
+        renderSourceChart(data.source);
+      } catch (error) {
+        console.error('Error fetching data:', error);
+        document.getElementById('val-visits').innerText = 'Error';
+        document.getElementById('val-clicks').innerText = 'Error';
       }
-    });
+    }
 
-    // Initialize Source Doughnut Chart
-    const ctxSource = document.getElementById('sourceChart').getContext('2d');
-    new Chart(ctxSource, {
-      type: 'doughnut',
-      data: {
-        labels: mockData.countries,
-        datasets: [{
-          data: mockData.countryValues,
-          backgroundColor: [
-            '#E2FF00', // Accent
-            '#FFFFFF', // White
-            '#9CA3AF', // Gray light
-            '#4B5563', // Gray dark
-            '#1F2937'  // Surface dark
-          ],
-          borderWidth: 0,
-          hoverOffset: 4
-        }]
-      },
-      options: {
-        responsive: true,
-        maintainAspectRatio: false,
-        cutout: '75%',
-        plugins: {
-          legend: {
-            position: 'bottom',
-            labels: {
-              usePointStyle: true,
-              boxWidth: 8,
-              boxHeight: 8,
-              padding: 20
+    function renderMainChart(dailyData) {
+      const ctxMain = document.getElementById('mainChart').getContext('2d');
+      
+      if (mainChartInstance) {
+        mainChartInstance.destroy();
+      }
+
+      const gradientVisits = ctxMain.createLinearGradient(0, 0, 0, 300);
+      gradientVisits.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
+      gradientVisits.addColorStop(1, 'rgba(255, 255, 255, 0)');
+
+      const gradientClicks = ctxMain.createLinearGradient(0, 0, 0, 300);
+      gradientClicks.addColorStop(0, 'rgba(226, 255, 0, 0.4)');
+      gradientClicks.addColorStop(1, 'rgba(226, 255, 0, 0)');
+
+      mainChartInstance = new Chart(ctxMain, {
+        type: 'line',
+        data: {
+          labels: dailyData.dates,
+          datasets: [
+            {
+              label: 'Download Clicks',
+              data: dailyData.clicks,
+              borderColor: '#E2FF00',
+              backgroundColor: gradientClicks,
+              borderWidth: 3,
+              tension: 0.4,
+              fill: true,
+              pointBackgroundColor: '#121212',
+              pointBorderColor: '#E2FF00',
+              pointBorderWidth: 2,
+              pointRadius: 4,
+              pointHoverRadius: 6
+            },
+            {
+              label: 'Page Visits',
+              data: dailyData.visits,
+              borderColor: '#FFFFFF',
+              backgroundColor: gradientVisits,
+              borderWidth: 2,
+              borderDash: [5, 5],
+              tension: 0.4,
+              fill: true,
+              pointRadius: 0,
+              pointHoverRadius: 0
+            }
+          ]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'top',
+              align: 'end',
+              labels: {
+                usePointStyle: true,
+                boxWidth: 8,
+                boxHeight: 8
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              titleFont: { family: "'Outfit', sans-serif", size: 14 },
+              bodyFont: { family: "'Inter', sans-serif", size: 13 },
+              padding: 12,
+              cornerRadius: 8,
+              displayColors: false
             }
           },
-          tooltip: {
-            backgroundColor: 'rgba(0,0,0,0.8)',
-            callbacks: {
-              label: function(context) {
-                return ` ${context.label}: ${context.raw}%`;
+          scales: {
+            y: {
+              beginAtZero: true,
+              border: { display: false }
+            },
+            x: {
+              border: { display: false }
+            }
+          },
+          interaction: {
+            mode: 'index',
+            intersect: false,
+          },
+        }
+      });
+    }
+
+    function renderSourceChart(sourceData) {
+      const ctxSource = document.getElementById('sourceChart').getContext('2d');
+      
+      if (sourceChartInstance) {
+        sourceChartInstance.destroy();
+      }
+
+      sourceChartInstance = new Chart(ctxSource, {
+        type: 'doughnut',
+        data: {
+          labels: sourceData.countries,
+          datasets: [{
+            data: sourceData.countryValues,
+            backgroundColor: [
+              '#E2FF00', // Accent
+              '#FFFFFF', // White
+              '#9CA3AF', // Gray light
+              '#4B5563', // Gray dark
+              '#1F2937'  // Surface dark
+            ],
+            borderWidth: 0,
+            hoverOffset: 4
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          cutout: '75%',
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                usePointStyle: true,
+                boxWidth: 8,
+                boxHeight: 8,
+                padding: 20
+              }
+            },
+            tooltip: {
+              backgroundColor: 'rgba(0,0,0,0.8)',
+              callbacks: {
+                label: function(context) {
+                  return ` ${context.label}: ${context.raw}`;
+                }
               }
             }
           }
         }
-      }
-    });
+      });
+    }
+
+    // Load data on page load
+    document.addEventListener('DOMContentLoaded', fetchAnalyticsData);
   </script>
 </body>
 </html>

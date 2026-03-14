@@ -1,0 +1,12 @@
+{
+  "name": "reppo-landing",
+  "version": "1.0.0",
+  "description": "Reppo Landing Page and Analytics Dashboard",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "@google-analytics/data": "^4.10.0"
+  }
+}
