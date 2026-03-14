@@ -713,20 +713,23 @@
       });
     }
 
-    // Language Detection
-    const userLang = navigator.language || navigator.userLanguage; 
-    const isSpanish = userLang.toLowerCase().includes('es');
-    const isPortuguese = userLang.toLowerCase().includes('pt');
-    
-    if (isSpanish) setLanguage('es');
-    else if (isPortuguese) setLanguage('pt');
-    else setLanguage('en');
+    // Apply on DOM Load to ensure elements exist
+    document.addEventListener('DOMContentLoaded', function() {
+      // Language Detection
+      const userLang = navigator.language || navigator.userLanguage; 
+      const isSpanish = userLang.toLowerCase().includes('es');
+      const isPortuguese = userLang.toLowerCase().includes('pt');
+      
+      if (isSpanish) setLanguage('es');
+      else if (isPortuguese) setLanguage('pt');
+      else setLanguage('en');
 
-    // TikTok In-App Browser Detection
-    const isTikTok = /Bytedance|TikTok/i.test(navigator.userAgent);
-    if (isTikTok) {
-      document.getElementById('tiktok-overlay').classList.add('active');
-    }
+      // TikTok In-App Browser Detection
+      const isTikTok = /Bytedance|TikTok/i.test(navigator.userAgent);
+      if (isTikTok) {
+        document.getElementById('tiktok-overlay').classList.add('active');
+      }
+    });
 
     // Psychology: Make the carousel snap exactly on center. 
     // This script ensures they notice it's a gallery they can swipe.
