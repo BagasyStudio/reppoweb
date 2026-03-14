@@ -6,7 +6,7 @@ export default async function handler(req, res) {
   // Handle User Cancellation or error
   if (error) {
     console.error(`TikTok OAuth Error: ${error_description}`);
-    return res.redirect(302, '/dashboard?error=tiktok_auth_failed');
+    return res.redirect(302, '/dashboard.html?error=tiktok_auth_failed');
   }
 
   // Validate state to prevent CSRF
@@ -16,7 +16,7 @@ export default async function handler(req, res) {
 
   if (!state || state !== storedState) {
     console.error('State mismatch. Possible CSRF attack.');
-    return res.redirect(302, '/dashboard?error=invalid_state');
+    return res.redirect(302, '/dashboard.html?error=invalid_state');
   }
 
   // Get environment variables or use the Sandbox credentials we just created
@@ -47,7 +47,7 @@ export default async function handler(req, res) {
 
     if (tokenData.error) {
       console.error('Failed to get token:', tokenData);
-      return res.redirect(302, '/dashboard?error=tiktok_token_failed');
+      return res.redirect(302, '/dashboard.html?error=tiktok_token_failed');
     }
 
     // Usually tokenData contains access_token, refresh_token, open_id.
@@ -61,10 +61,10 @@ export default async function handler(req, res) {
     ]);
 
     // Redirect to dashboard with a success parameter
-    res.redirect(302, '/dashboard?tiktok=success');
+    res.redirect(302, '/dashboard.html?tiktok=success');
 
   } catch (err) {
     console.error('Error during token exchange:', err);
-    res.redirect(302, '/dashboard?error=tiktok_server_error');
+    res.redirect(302, '/dashboard.html?error=tiktok_server_error');
   }
 }
