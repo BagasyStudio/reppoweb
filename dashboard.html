@@ -728,9 +728,9 @@
         
         // Check if it's a float (CVR) or Int (Visits/Clicks)
         if (Number.isInteger(end) && Number.isInteger(start)) {
-          obj.childNodes[0].nodeValue = Math.floor(currentVal) + ' '; 
+          obj.innerText = Math.floor(currentVal) + ''; 
         } else {
-          obj.childNodes[0].nodeValue = currentVal.toFixed(1) + (obj.id === 'val-conversion' ? '%' : ' ');
+          obj.innerText = currentVal.toFixed(1) + (obj.id === 'val-conversion' ? '%' : '');
         }
         
         if (progress < 1) {
@@ -741,9 +741,12 @@
     }
     
     function setSkeletonState(isLoading) {
-      const metrics = ['val-visits', 'val-clicks', 'val-conversion'];
+      const metrics = ['val-followers', 'val-likes', 'val-views'];
       if(isLoading) {
-        metrics.forEach(m => document.getElementById(m).innerHTML = '<div class="skeleton skeleton-text"></div>');
+        metrics.forEach(m => {
+          const el = document.getElementById(m);
+          if (el) el.innerHTML = '<div class="skeleton skeleton-text"></div>';
+        });
         if(!mainChartInstance) document.getElementById('mainChartSkeleton').style.display = 'block';
         if(!sourceChartInstance) document.getElementById('sourceChartSkeleton').style.display = 'block';
       } else {
