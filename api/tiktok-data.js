@@ -2,7 +2,7 @@
 
 const { sql } = require('@vercel/postgres');
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Extract user session ID from HTTP-only cookie
   const cookies = req.headers.cookie || '';
   const sessionMatch = cookies.match(/reppo_session_id=([^;]+)/);

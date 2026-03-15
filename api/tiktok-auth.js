@@ -1,6 +1,6 @@
 // api/tiktok-auth.js
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   const envKey = (process.env.TIKTOK_CLIENT_KEY || '').trim().replace(/['"]/g, '');
   const clientKey = envKey || 'sbawrrb6mhjjbmdqnm';
   

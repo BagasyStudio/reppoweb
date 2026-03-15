@@ -1,6 +1,6 @@
 // api/tiktok-callback.js
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   const { code, state, error, error_description } = req.query;
 
   // Handle User Cancellation or error
