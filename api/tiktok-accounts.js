@@ -1,4 +1,4 @@
-import { sql } from '@vercel/postgres';
+const { sql } = require('@vercel/postgres');
 
 export default async function handler(req, res) {
   // Extract user session ID from HTTP-only cookie
