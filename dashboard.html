@@ -524,6 +524,99 @@
       transform: translateY(-2px);
       box-shadow: 0 8px 16px rgba(0,0,0,0.6);
     }
+    
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.8);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      z-index: 999;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+    .modal-card {
+      background: var(--surface);
+      border: 1px solid var(--surface-border);
+      border-radius: 24px;
+      padding: 32px;
+      width: 90%;
+      max-width: 440px;
+      text-align: center;
+      transform: scale(0.95) translateY(20px);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+    }
+    .modal-overlay.active .modal-card {
+      transform: scale(1) translateY(0);
+    }
+    .modal-icon {
+      width: 64px;
+      height: 64px;
+      background: rgba(226, 255, 0, 0.1);
+      color: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 28px;
+      margin: 0 auto 20px auto;
+    }
+    .modal-title {
+      font-family: var(--font-display);
+      font-size: 22px;
+      color: #fff;
+      margin-bottom: 12px;
+    }
+    .modal-desc {
+      color: var(--text-sec);
+      font-size: 14px;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+    .modal-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .modal-btn {
+      padding: 14px;
+      border-radius: 12px;
+      font-family: var(--font-body);
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      transition: var(--transition);
+      display: inline-block;
+      font-size: 14px;
+    }
+    .modal-btn.primary {
+      background: #fff;
+      color: #000;
+      border: none;
+    }
+    .modal-btn.primary:hover {
+      background: #e2e8f0;
+      transform: translateY(-2px);
+    }
+    .modal-btn.secondary {
+      background: transparent;
+      color: var(--text-sec);
+      border: 1px solid var(--surface-border);
+    }
+    .modal-btn.secondary:hover {
+      background: rgba(255,255,255,0.05);
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -610,9 +703,9 @@
     <div class="tiktok-section" style="margin-top: 32px; animation: fadeUp 0.6s ease-out 0.3s both;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
         <h2 class="chart-title" style="margin-bottom: 0;" data-i18n="tiktok_integration">TikTok Integration</h2>
-        <a href="/api/tiktok-auth" id="connect-more-btn" class="tiktok-btn" style="display: none; padding: 6px 12px; font-size: 0.85rem;">
+        <button onclick="openAccountSwitchModal()" id="connect-more-btn" class="tiktok-btn" style="display: none; padding: 6px 12px; font-size: 0.85rem; border:none; background:rgba(255,255,255,0.1);">
           <i class="fas fa-plus" style="margin-right: 6px;"></i> <span data-i18n="add_account">Add Account</span>
-        </a>
+        </button>
       </div>
       
       <!-- Linked Accounts List -->
@@ -642,6 +735,20 @@
 
   </div>
 
+  <!-- Account Switch Warning Modal -->
+  <div id="accountSwitchModal" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
+      <h3 class="modal-title" data-i18n="modal_title">Wait a second!</h3>
+      <p class="modal-desc" data-i18n="modal_desc">TikTok automatically connects your currently active browser session. If you want to connect a <b>different</b> account, you must log out of TikTok.com first.</p>
+      <div class="modal-actions">
+        <a href="https://www.tiktok.com/logout" target="_blank" class="modal-btn secondary" onclick="closeAccountSwitchModal()"><i class="fas fa-external-link-alt" style="margin-right:8px;"></i> <span data-i18n="modal_btn_logout">Log out of TikTok.com</span></a>
+        <a href="/api/tiktok-auth" class="modal-btn primary"><i class="fab fa-tiktok" style="margin-right:8px;"></i> <span data-i18n="modal_btn_continue">Continue anyway</span></a>
+        <button class="modal-btn secondary" onclick="closeAccountSwitchModal()" style="border:none; margin-top:-4px;" data-i18n="modal_btn_cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
   <script>
     const translations = {
       en: {
@@ -654,7 +761,9 @@
         today: "Today", days_label: "{days} Days", error: "Error",
         tiktok_integration: "TikTok Integration", connect_tiktok_desc: "Connect your TikTok account to track profile performance and video views directly here.",
         signin_tiktok: "Sign In with TikTok", tiktok_followers: "TikTok Followers", tiktok_likes: "Total Likes", tiktok_views: "Estimated Views",
-        add_account: "Add Account", engagement_over_time: "Engagement Over Time", engagement_breakdown: "Engagement Breakdown"
+        add_account: "Add Account", engagement_over_time: "Engagement Over Time", engagement_breakdown: "Engagement Breakdown",
+        modal_title: "Wait a second!", modal_desc: "TikTok automatically connects your currently active browser session. If you want to connect a different account, you must log out of TikTok.com first.",
+        modal_btn_logout: "Log out of TikTok.com", modal_btn_continue: "Continue anyway", modal_btn_cancel: "Cancel"
       },
       es: {
         metrics_title: "Métricas / Reppo", live_data: "Datos en Tiempo Real",
@@ -666,7 +775,9 @@
         today: "Hoy", days_label: "{days} Días", error: "Error",
         tiktok_integration: "Integración TikTok", connect_tiktok_desc: "Conecta tu cuenta de TikTok para rastrear el rendimiento del perfil y las vistas de los videos directamente aquí.",
         signin_tiktok: "Iniciar Sesión con TikTok", tiktok_followers: "Seguidores en TikTok", tiktok_likes: "Me Gustas Totales", tiktok_views: "Vistas Estimadas",
-        add_account: "Agregar Cuenta", engagement_over_time: "Interacciones", engagement_breakdown: "Desglose de Interacciones"
+        add_account: "Agregar Cuenta", engagement_over_time: "Interacciones", engagement_breakdown: "Desglose de Interacciones",
+        modal_title: "¡Un momento!", modal_desc: "TikTok conecta automáticamente la sesión que tengas activa en este navegador. Para conectar una cuenta diferente, primero debes cerrar sesión en TikTok.com.",
+        modal_btn_logout: "Cerrar sesión en TikTok", modal_btn_continue: "Continuar de todos modos", modal_btn_cancel: "Cancelar"
       },
       pt: {
         metrics_title: "Métricas / Reppo", live_data: "Dados em Tempo Real",
@@ -678,7 +789,9 @@
         today: "Hoje", days_label: "{days} Dias", error: "Erro",
         tiktok_integration: "Integração TikTok", connect_tiktok_desc: "Conecte sua conta do TikTok para acompanhar o desempenho do perfil e visualizações de vídeos diretamente aqui.",
         signin_tiktok: "Entrar com TikTok", tiktok_followers: "Seguidores no TikTok", tiktok_likes: "Total de Curtidas", tiktok_views: "Visualizações (Est.)",
-        add_account: "Adicionar Conta", engagement_over_time: "Engajamento", engagement_breakdown: "Análise de Engajamento"
+        add_account: "Adicionar Conta", engagement_over_time: "Engajamento", engagement_breakdown: "Análise de Engajamento",
+        modal_title: "Um momento!", modal_desc: "O TikTok conecta automaticamente a sessão ativa no navegador. Para conectar uma conta diferente, você deve sair do TikTok.com primeiro.",
+        modal_btn_logout: "Sair do TikTok.com", modal_btn_continue: "Continuar mesmo assim", modal_btn_cancel: "Cancelar"
       }
     };
 
@@ -698,8 +811,20 @@
 
     function applyTranslations() {
       document.querySelectorAll('[data-i18n]').forEach(el => {
-        el.innerText = t(el.getAttribute('data-i18n'));
+        if(el.tagName === 'P' || el.tagName === 'H3') {
+           el.innerHTML = t(el.getAttribute('data-i18n'));
+        } else {
+           el.innerText = t(el.getAttribute('data-i18n'));
+        }
       });
+    }
+
+    // Modal Control Functions
+    function openAccountSwitchModal() {
+      document.getElementById('accountSwitchModal').classList.add('active');
+    }
+    function closeAccountSwitchModal() {
+      document.getElementById('accountSwitchModal').classList.remove('active');
     }
 
     // Global Chart Defaults matching Reppo aesthetic
