@@ -53,13 +53,71 @@ export default async function handler(req, res) {
       return res.redirect(302, '/dashboard.html?error=tiktok_token_failed');
     }
 
-    // Usually tokenData contains access_token, refresh_token, open_id.
     const accessToken = tokenData.access_token;
+    const refreshToken = tokenData.refresh_token;
 
-    // Securely store the access token in an HTTP-only cookie
-    // In a real app, you might map this `open_id` to a database user instead of raw cookies
+    // Fetch basic user info from TikTok using the new token
+    const userUrl = 'https://open.tiktokapis.com/v2/user/info/?fields=open_id,display_name,avatar_url';
+    const userRes = await fetch(userUrl, {
+      method: 'GET',
+      headers: {
+        'Authorization': `Bearer ${accessToken}`,
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    const userData = await userRes.json();
+    if (userData.error && userData.error.code !== 'ok' && userData.error.code !== 0) {
+      console.error('Failed to get user profile:', userData.error);
+      return res.redirect(302, '/dashboard.html?error=tiktok_user_failed');
+    }
+
+    const userInfo = userData.data.user;
+    
+    // Connect to Vercel Postgres and Upsert Token
+    const { sql } = require('@vercel/postgres');
+    
+    // For this personal dashboard, we assume a single Reppo user ID.
+    // In a multi-tenant app, you would use the logged-in user ID from a session token.
+    const reppoUserId = 'reppo_admin'; 
+    
+    try {
+      await sql`
+        INSERT INTO tiktok_accounts (
+          user_id,
+          tiktok_user_id,
+          username,
+          display_name,
+          avatar_url,
+          access_token,
+          refresh_token,
+          updated_at
+        ) VALUES (
+          ${reppoUserId},
+          ${userInfo.open_id},
+          ${userInfo.display_name}, 
+          ${userInfo.display_name},
+          ${userInfo.avatar_url},
+          ${accessToken},
+          ${refreshToken},
+          CURRENT_TIMESTAMP
+        )
+        ON CONFLICT (tiktok_user_id) 
+        DO UPDATE SET 
+          access_token = EXCLUDED.access_token,
+          refresh_token = EXCLUDED.refresh_token,
+          display_name = EXCLUDED.display_name,
+          avatar_url = EXCLUDED.avatar_url,
+          updated_at = CURRENT_TIMESTAMP;
+      `;
+    } catch (dbError) {
+      console.error('Database Error:', dbError);
+      return res.redirect(302, '/dashboard.html?error=db_error');
+    }
+
+    // Still set a session cookie to indicate the user is logged in
     res.setHeader('Set-Cookie', [
-      `tiktok_access_token=${accessToken}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`,
+      `reppo_session_id=${reppoUserId}; Path=/; HttpOnly; SameSite=Lax; Max-Age=86400`,
       `tiktok_oauth_state=; Path=/; HttpOnly; SameSite=Lax; Max-Age=0` // Clear the state cookie
     ]);
 

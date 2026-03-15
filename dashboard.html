@@ -605,7 +605,15 @@
     
     <!-- TikTok Integration Section -->
     <div class="tiktok-section" style="margin-top: 32px; animation: fadeUp 0.6s ease-out 0.3s both;">
-      <h2 class="chart-title" style="margin-bottom: 16px;" data-i18n="tiktok_integration">TikTok Integration</h2>
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+        <h2 class="chart-title" style="margin-bottom: 0;" data-i18n="tiktok_integration">TikTok Integration</h2>
+        <a href="/api/tiktok-auth" id="connect-more-btn" class="tiktok-btn" style="display: none; padding: 6px 12px; font-size: 0.85rem;">
+          <i class="fas fa-plus" style="margin-right: 6px;"></i> <span data-i18n="add_account">Add Account</span>
+        </a>
+      </div>
+      
+      <!-- Linked Accounts List -->
+      <div id="tiktok-accounts-list" style="display: none; gap: 12px; margin-bottom: 24px; flex-wrap: wrap;"></div>
       
       <!-- Logged Out State -->
       <div id="tiktok-login-card" class="metric-card" style="text-align: center; justify-content: center; align-items: center; min-height: 180px;">
@@ -1164,6 +1172,25 @@
         document.getElementById('tiktok-charts-container').style.display = 'block';
         document.getElementById('tiktok-video-grid-title').style.display = 'block';
         document.getElementById('tiktok-video-grid').style.display = 'grid';
+        document.getElementById('connect-more-btn').style.display = 'inline-flex';
+        
+        // Fetch and display linked accounts
+        const accountsRes = await fetch('/api/tiktok-accounts');
+        if (accountsRes.ok) {
+          const accData = await accountsRes.json();
+          const listContainer = document.getElementById('tiktok-accounts-list');
+          listContainer.style.display = 'flex';
+          listContainer.innerHTML = '';
+          if (accData.accounts && accData.accounts.length > 0) {
+            accData.accounts.forEach(acc => {
+              const pill = document.createElement('div');
+              pill.style.cssText = 'display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem;';
+              const avatar = acc.avatar_url || 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=50';
+              pill.innerHTML = \`<img src="\${avatar}" style="width: 24px; height: 24px; border-radius: 50%; margin-right: 8px; border: 1px solid var(--accent);"><span style="font-weight: 500;">\${acc.display_name}</span>\`;
+              listContainer.appendChild(pill);
+            });
+          }
+        }
         
         // Animate and set values
         animateValue(document.getElementById('val-tk-followers'), 0, data.stats.followers, 1000);
