@@ -557,33 +557,36 @@
     <!-- Top Metrics -->
     <div class="metrics-grid">
       <div class="metric-card">
-        <div class="metric-title" data-i18n="total_visits">Total Visits</div>
-        <div class="metric-value" id="val-visits">
-          -- <span class="metric-trend">---</span>
+        <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div class="metric-title" style="margin-bottom: 0;"><i class="fab fa-tiktok" style="color: #E2FF00; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_followers">TikTok Followers</span></div>
+          <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(226, 255, 0, 0.15); color: #E2FF00; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-circle" style="font-size: 6px; margin-right: 4px; vertical-align: middle; animation: pulse 2s infinite;"></i> Live</span>
         </div>
+        <div class="metric-value" id="val-followers">--</div>
       </div>
       
       <div class="metric-card">
-        <div class="metric-title" data-i18n="download_clicks">Download Clicks</div>
-        <div class="metric-value" id="val-clicks">
-          -- <span class="metric-trend">---</span>
+        <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div class="metric-title" style="margin-bottom: 0;"><i class="fas fa-heart" style="color: #ff2a5f; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_likes">Total Likes</span></div>
+          <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(255, 42, 95, 0.15); color: #ff2a5f; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-fire" style="margin-right: 4px;"></i> Hot</span>
         </div>
+        <div class="metric-value" id="val-likes">--</div>
       </div>
-      
+
       <div class="metric-card">
-        <div class="metric-title" data-i18n="conversion_rate">Conversion Rate</div>
-        <div class="metric-value" id="val-conversion">
-          --%
+        <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+          <div class="metric-title" style="margin-bottom: 0;"><i class="fas fa-eye" style="color: #00f2fe; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_views">Estimated Views</span></div>
+          <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(0, 242, 254, 0.15); color: #00f2fe; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-chart-bar" style="margin-right: 4px;"></i> All Time</span>
         </div>
+        <div class="metric-value" id="val-views">--</div>
       </div>
     </div>
 
     <!-- Charts -->
     <div class="charts-grid">
-      <!-- Main Line Chart: Traffic over time -->
+      <!-- Main Line Chart: Engagement over time -->
       <div class="chart-card">
         <div class="chart-header">
-          <h2 class="chart-title" data-i18n="traffic_conversions">Traffic & Conversions</h2>
+          <h2 class="chart-title" data-i18n="engagement_over_time"><i class="fas fa-chart-line" style="color: #E2FF00; margin-right: 8px;"></i> Engagement Over Time</h2>
         </div>
         <div class="chart-container" id="mainChartContainer">
           <div class="skeleton skeleton-chart" id="mainChartSkeleton"></div>
@@ -591,10 +594,10 @@
         </div>
       </div>
       
-      <!-- Doughnut Chart: Traffic Sources -->
+      <!-- Doughnut Chart: Engagement Breakdown -->
       <div class="chart-card">
         <div class="chart-header">
-          <h2 class="chart-title" data-i18n="top_countries">Top Countries</h2>
+          <h2 class="chart-title" data-i18n="engagement_breakdown"><i class="fas fa-chart-pie" style="color: #ff2a5f; margin-right: 8px;"></i> Engagement Breakdown</h2>
         </div>
         <div class="chart-container" id="sourceChartContainer">
           <div class="skeleton skeleton-chart" id="sourceChartSkeleton"></div>
@@ -624,48 +627,7 @@
         </a>
       </div>
 
-      <!-- Logged In State (Metrics) -->
-      <div id="tiktok-metrics-grid" class="metrics-grid" style="display: none; margin-bottom: 0;">
-        <div class="metric-card">
-          <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-            <div class="metric-title" style="margin-bottom: 0;"><i class="fab fa-tiktok" style="color: #E2FF00; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_followers">TikTok Followers</span></div>
-            <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(226, 255, 0, 0.15); color: #E2FF00; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-circle" style="font-size: 6px; margin-right: 4px; vertical-align: middle; animation: pulse 2s infinite;"></i> Live</span>
-          </div>
-          <div class="metric-value" id="val-tk-followers" style="font-size: 2.2rem;">--</div>
-        </div>
-        
-        <div class="metric-card">
-          <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-            <div class="metric-title" style="margin-bottom: 0;"><i class="fas fa-heart" style="color: #ff2a5f; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_likes">Total Likes</span></div>
-            <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(255, 42, 95, 0.15); color: #ff2a5f; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-fire" style="margin-right: 4px;"></i> Hot</span>
-          </div>
-          <div class="metric-value" id="val-tk-likes" style="font-size: 2.2rem;">--</div>
-        </div>
-
-        <div class="metric-card">
-          <div class="metric-header" style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
-            <div class="metric-title" style="margin-bottom: 0;"><i class="fas fa-eye" style="color: #00f2fe; margin-right: 8px; font-size: 1.1em;"></i> <span data-i18n="tiktok_views">Estimated Views</span></div>
-            <span class="trend-badge positive" style="font-size: 10px; padding: 3px 8px; border-radius: 6px; background: rgba(0, 242, 254, 0.15); color: #00f2fe; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;"><i class="fas fa-chart-bar" style="margin-right: 4px;"></i> All Time</span>
-          </div>
-          <div class="metric-value" id="val-tk-views" style="font-size: 2.2rem;">--</div>
-        </div>
-      </div>
-
-      <!-- TIKTOK CHARTS SECTION -->
-      <div class="tiktok-charts-container" id="tiktok-charts-container">
-        <div class="chart-card" style="margin-bottom: 32px;">
-          <div class="chart-header">
-            <h3 class="chart-title"><i class="fas fa-chart-line" style="color: #E2FF00; margin-right: 8px;"></i> Engagement Over Time</h3>
-            <div class="filters">
-              <button class="time-filter active" onclick="updateTikTokChart(7)">7D</button>
-              <button class="time-filter" onclick="updateTikTokChart(30)">30D</button>
-            </div>
-          </div>
-          <div class="chart-container" style="height: 350px;">
-            <canvas id="tiktokTimelineChart"></canvas>
-          </div>
-        </div>
-      </div>
+      <!-- TIKTOK RECENT VIDEOS SECTION -->
 
       <!-- TIKTOK RECENT VIDEOS SECTION -->
       <h3 id="tiktok-video-grid-title" class="chart-title" style="display: none; margin-top: 32px; margin-bottom: 16px;"><i class="fas fa-video" style="color: #ff2a5f; margin-right: 8px;"></i> Recent Videos</h3>
@@ -692,7 +654,7 @@
         today: "Today", days_label: "{days} Days", error: "Error",
         tiktok_integration: "TikTok Integration", connect_tiktok_desc: "Connect your TikTok account to track profile performance and video views directly here.",
         signin_tiktok: "Sign In with TikTok", tiktok_followers: "TikTok Followers", tiktok_likes: "Total Likes", tiktok_views: "Estimated Views",
-        add_account: "Add Account"
+        add_account: "Add Account", engagement_over_time: "Engagement Over Time", engagement_breakdown: "Engagement Breakdown"
       },
       es: {
         metrics_title: "Métricas / Reppo", live_data: "Datos en Tiempo Real",
@@ -704,7 +666,7 @@
         today: "Hoy", days_label: "{days} Días", error: "Error",
         tiktok_integration: "Integración TikTok", connect_tiktok_desc: "Conecta tu cuenta de TikTok para rastrear el rendimiento del perfil y las vistas de los videos directamente aquí.",
         signin_tiktok: "Iniciar Sesión con TikTok", tiktok_followers: "Seguidores en TikTok", tiktok_likes: "Me Gustas Totales", tiktok_views: "Vistas Estimadas",
-        add_account: "Agregar Cuenta"
+        add_account: "Agregar Cuenta", engagement_over_time: "Interacciones", engagement_breakdown: "Desglose de Interacciones"
       },
       pt: {
         metrics_title: "Métricas / Reppo", live_data: "Dados em Tempo Real",
@@ -716,7 +678,7 @@
         today: "Hoje", days_label: "{days} Dias", error: "Erro",
         tiktok_integration: "Integração TikTok", connect_tiktok_desc: "Conecte sua conta do TikTok para acompanhar o desempenho do perfil e visualizações de vídeos diretamente aqui.",
         signin_tiktok: "Entrar com TikTok", tiktok_followers: "Seguidores no TikTok", tiktok_likes: "Total de Curtidas", tiktok_views: "Visualizações (Est.)",
-        add_account: "Adicionar Conta"
+        add_account: "Adicionar Conta", engagement_over_time: "Engajamento", engagement_breakdown: "Análise de Engajamento"
       }
     };
 
@@ -792,220 +754,103 @@
       }
     }
 
-    async function fetchAnalyticsData(days = 7) {
-      const isInitialLoad = !mainChartInstance;
+    function updateDashboard(days) {
+      if(!currentTikTokData) return;
       currentDays = days;
-      const trendLabel = days === 1 ? t('today') : t('days_label', {days});
       
-      if (isInitialLoad) {
-        setSkeletonState(true);
-      } else {
-         // Subtle fade for refresh
-         document.getElementById('mainChart').style.opacity = '0.5';
-         document.getElementById('sourceChart').style.opacity = '0.5';
-      }
-
-      try {
-        const response = await fetch(`/api/analytics?days=${days}`);
-        if (!response.ok) {
-          throw new Error('Network response was not ok');
-        }
-        const data = await response.json();
-        
-        const totalVisits = data.daily.visits.reduce((a, b) => a + Number(b), 0);
-        const totalClicks = data.daily.clicks.reduce((a, b) => a + Number(b), 0);
-        const cvr = totalVisits > 0 ? parseFloat(((totalClicks / totalVisits) * 100).toFixed(1)) : 0.0;
-
-        // Update UI HTML structure if initially loading
-        if (isInitialLoad) {
-          document.getElementById('val-visits').innerHTML = `0 <span class="metric-trend">${trendLabel}</span>`;
-          document.getElementById('val-clicks').innerHTML = `0 <span class="metric-trend">${trendLabel}</span>`;
-          document.getElementById('val-conversion').innerHTML = `0.0%`;
-        } else {
-          // Update the trend labels silently
-          document.querySelector('#val-visits .metric-trend').innerText = trendLabel;
-          document.querySelector('#val-clicks .metric-trend').innerText = trendLabel;
-        }
-
-        // Animate numbers
-        const currentVisits = isInitialLoad ? 0 : parseInt(document.getElementById('val-visits').childNodes[0].nodeValue || 0);
-        const currentClicks = isInitialLoad ? 0 : parseInt(document.getElementById('val-clicks').childNodes[0].nodeValue || 0);
-        const currentCvr = isInitialLoad ? 0.0 : parseFloat(document.getElementById('val-conversion').childNodes[0].nodeValue || 0);
-
-        animateValue(document.getElementById('val-visits'), currentVisits, totalVisits, 1000);
-        animateValue(document.getElementById('val-clicks'), currentClicks, totalClicks, 1000);
-        animateValue(document.getElementById('val-conversion'), currentCvr, cvr, 1000);
-
-        // Render Charts Smoothly
-        setSkeletonState(false);
-        renderMainChart(data.daily);
-        renderSourceChart(data.source);
-        
-      } catch (error) {
-        console.error('Error fetching data:', error);
-        document.getElementById('val-visits').innerText = t('error');
-        document.getElementById('val-clicks').innerText = t('error');
+      const videos = currentTikTokData.videos;
+      const now = Math.floor(Date.now() / 1000);
+      const cutoff = now - (days * 24 * 60 * 60);
+      const filteredVideos = videos.filter(v => v.create_time >= cutoff).sort((a,b) => a.create_time - b.create_time);
+      
+      renderMainChart(filteredVideos);
+      renderSourceChart(filteredVideos);
+      
+      if(window.event && window.event.target) {
+        const btn = window.event.target;
+        btn.parentElement.querySelectorAll('.time-filter').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
       }
     }
 
-    function renderMainChart(dailyData) {
+    function renderMainChart(filteredVideos) {
       const ctxMain = document.getElementById('mainChart').getContext('2d');
-      
-      const gradientVisits = ctxMain.createLinearGradient(0, 0, 0, 300);
-      gradientVisits.addColorStop(0, 'rgba(255, 255, 255, 0.1)');
-      gradientVisits.addColorStop(1, 'rgba(255, 255, 255, 0)');
+      const labels = filteredVideos.map(v => new Date(v.create_time * 1000).toLocaleDateString(getLang(), {month: 'short', day: 'numeric'}));
+      const views = filteredVideos.map(v => v.view_count || 0);
+      const likes = filteredVideos.map(v => v.like_count || 0);
 
-      const gradientClicks = ctxMain.createLinearGradient(0, 0, 0, 300);
-      gradientClicks.addColorStop(0, 'rgba(226, 255, 0, 0.4)');
-      gradientClicks.addColorStop(1, 'rgba(226, 255, 0, 0)');
+      const gradientViews = ctxMain.createLinearGradient(0, 0, 0, 300);
+      gradientViews.addColorStop(0, 'rgba(0, 242, 254, 0.4)');
+      gradientViews.addColorStop(1, 'rgba(0, 242, 254, 0)');
+
+      const gradientLikes = ctxMain.createLinearGradient(0, 0, 0, 300);
+      gradientLikes.addColorStop(0, 'rgba(255, 42, 95, 0.4)');
+      gradientLikes.addColorStop(1, 'rgba(255, 42, 95, 0)');
 
       if (mainChartInstance) {
-        // Update existing chart smoothly
-        mainChartInstance.data.labels = dailyData.dates;
-        mainChartInstance.data.datasets[0].data = dailyData.clicks;
-        mainChartInstance.data.datasets[1].data = dailyData.visits;
-        mainChartInstance.update({
-             duration: 800,
-             easing: 'easeOutQuart'
-        });
+        mainChartInstance.data.labels = labels;
+        mainChartInstance.data.datasets[0].data = views;
+        mainChartInstance.data.datasets[1].data = likes;
+        mainChartInstance.update({ duration: 800, easing: 'easeOutQuart' });
       } else {
-        // Create new chart
         mainChartInstance = new Chart(ctxMain, {
           type: 'line',
           data: {
-            labels: dailyData.dates,
+            labels: labels,
             datasets: [
-              {
-                label: 'Download Clicks',
-                data: dailyData.clicks,
-                borderColor: '#E2FF00',
-                backgroundColor: gradientClicks,
-                borderWidth: 3,
-                tension: 0.4,
-                fill: true,
-                pointBackgroundColor: '#121212',
-                pointBorderColor: '#E2FF00',
-                pointBorderWidth: 2,
-                pointRadius: 4,
-                pointHoverRadius: 6
-              },
-              {
-                label: 'Page Visits',
-                data: dailyData.visits,
-                borderColor: '#FFFFFF',
-                backgroundColor: gradientVisits,
-                borderWidth: 2,
-                borderDash: [5, 5],
-                tension: 0.4,
-                fill: true,
-                pointRadius: 0,
-                pointHoverRadius: 0
-              }
+              { label: t('tiktok_views'), data: views, borderColor: '#00f2fe', backgroundColor: gradientViews, fill: true, tension: 0.4, pointRadius: 4, pointHoverRadius: 6 },
+              { label: t('tiktok_likes'), data: likes, borderColor: '#ff2a5f', backgroundColor: gradientLikes, borderDash: [5, 5], fill: true, tension: 0.4, pointRadius: 4, pointHoverRadius: 6 }
             ]
           },
           options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            animation: {
-              duration: 1200,
-              easing: 'easeOutQuart'
-            },
+            responsive: true, maintainAspectRatio: false,
+            interaction: { mode: 'index', intersect: false },
             plugins: {
-              legend: {
-                position: 'top',
-                align: 'end',
-                labels: {
-                  usePointStyle: true,
-                  boxWidth: 8,
-                  boxHeight: 8
-                }
-              },
-              tooltip: {
-                backgroundColor: 'rgba(0,0,0,0.8)',
-                titleFont: { family: "'Outfit', sans-serif", size: 14 },
-                bodyFont: { family: "'Inter', sans-serif", size: 13 },
-                padding: 12,
-                cornerRadius: 8,
-                displayColors: false
-              }
+              legend: { labels: { color: 'rgba(255,255,255,0.8)', font: { family: "'Inter', sans-serif" } } },
+              tooltip: { backgroundColor: 'rgba(0,0,0,0.8)', padding: 12, cornerRadius: 8 }
             },
             scales: {
-              y: {
-                beginAtZero: true,
-                border: { display: false },
-                ticks: { color: 'rgba(255,255,255,0.5)', padding: 10, font: { size: 12 } }
-              },
-              x: {
-                border: { display: false },
-                ticks: { color: 'rgba(255,255,255,0.5)', maxTicksLimit: 6 }
-              }
-            },
-            interaction: {
-              mode: 'index',
-              intersect: false,
+              y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: "'Inter', sans-serif" } } },
+              x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: "'Inter', sans-serif" } } }
             }
           }
         });
       }
     }
 
-    function renderSourceChart(sourceData) {
+    function renderSourceChart(filteredVideos) {
       const ctxSource = document.getElementById('sourceChart').getContext('2d');
+      
+      let totalLikes = 0, totalComments = 0, totalShares = 0;
+      filteredVideos.forEach(v => {
+        totalLikes += (v.like_count || 0);
+        totalComments += (v.comment_count || 0);
+        totalShares += (v.share_count || 0);
+      });
+
+      const dataValues = [totalLikes, totalComments, totalShares];
+      const hasData = totalLikes > 0 || totalComments > 0 || totalShares > 0;
 
       if (sourceChartInstance) {
-        // Smoothly update Source Chart
-        sourceChartInstance.data.labels = sourceData.countries;
-        sourceChartInstance.data.datasets[0].data = sourceData.countryValues;
-        sourceChartInstance.update({
-             duration: 800,
-             easing: 'easeOutQuart'
-        });
+        sourceChartInstance.data.datasets[0].data = hasData ? dataValues : [1];
+        sourceChartInstance.data.datasets[0].backgroundColor = hasData ? ['#ff2a5f', '#FFFFFF', '#00f2fe'] : ['#1F2937'];
+        sourceChartInstance.update({ duration: 800, easing: 'easeOutQuart' });
       } else {
         sourceChartInstance = new Chart(ctxSource, {
           type: 'doughnut',
           data: {
-            labels: sourceData.countries.length > 0 ? sourceData.countries : ['No Data'],
+            labels: ['Likes', 'Comments', 'Shares'],
             datasets: [{
-              data: sourceData.countryValues.length > 0 ? sourceData.countryValues : [1],
-              backgroundColor: sourceData.countryValues.length > 0 ? [
-                '#E2FF00', '#FFFFFF', '#9CA3AF', '#4B5563', '#1F2937'
-              ] : ['#1F2937'],
-              borderWidth: 0,
-              hoverOffset: 4
+              data: hasData ? dataValues : [1],
+              backgroundColor: hasData ? ['#ff2a5f', '#FFFFFF', '#00f2fe'] : ['#1F2937'],
+              borderWidth: 0, hoverOffset: 4
             }]
           },
           options: {
-            responsive: true,
-            maintainAspectRatio: false,
-            layout: {
-              padding: { top: 0, bottom: 0, left: 10, right: 10 }
-            },
-            cutout: '80%', /* Thinner doughnut for premium look */
-            animation: {
-              duration: 1200,
-              easing: 'easeOutQuart'
-            },
+            responsive: true, maintainAspectRatio: false, cutout: '80%',
             plugins: {
-              legend: {
-                position: 'bottom',
-                align: 'center',
-                labels: {
-                  usePointStyle: true,
-                  boxWidth: 8,
-                  boxHeight: 8,
-                  padding: 24,
-                  color: 'rgba(255,255,255,0.8)',
-                  font: { family: "'Inter', sans-serif", size: 12 }
-                }
-              },
-              tooltip: {
-                backgroundColor: 'rgba(0,0,0,0.8)',
-                callbacks: {
-                  label: function(context) {
-                    return ` ${context.label}: ${context.raw}`;
-                  }
-                }
-              }
+              legend: { position: 'bottom', labels: { color: 'rgba(255,255,255,0.8)', padding: 24, usePointStyle: true } },
+              tooltip: { backgroundColor: 'rgba(0,0,0,0.8)' }
             }
           }
         });
@@ -1024,7 +869,7 @@
         e.target.classList.add('active');
         // Fetch data
         const days = parseInt(e.target.getAttribute('data-days'));
-        fetchAnalyticsData(days);
+        updateDashboard(days);
       });
     });
     
@@ -1038,57 +883,6 @@
         card.style.setProperty('--mouse-y', `${y}px`);
       });
     });
-
-    function renderTikTokChart(videos, days) {
-      const ctx = document.getElementById('tiktokTimelineChart').getContext('2d');
-      const now = Math.floor(Date.now() / 1000);
-      const cutoff = now - (days * 24 * 60 * 60);
-      const filteredVideos = videos.filter(v => v.create_time >= cutoff).sort((a,b) => a.create_time - b.create_time);
-      
-      const labels = filteredVideos.map(v => new Date(v.create_time * 1000).toLocaleDateString(getLang(), {month: 'short', day: 'numeric'}));
-      const views = filteredVideos.map(v => v.view_count || 0);
-      const likes = filteredVideos.map(v => v.like_count || 0);
-
-      if (tiktokTimelineChartInstance) {
-        tiktokTimelineChartInstance.data.labels = labels;
-        tiktokTimelineChartInstance.data.datasets[0].data = views;
-        tiktokTimelineChartInstance.data.datasets[1].data = likes;
-        tiktokTimelineChartInstance.update({ duration: 800, easing: 'easeOutQuart' });
-      } else {
-        tiktokTimelineChartInstance = new Chart(ctx, {
-          type: 'line',
-          data: {
-            labels: labels,
-            datasets: [
-              { label: 'Views', data: views, borderColor: '#E2FF00', backgroundColor: 'rgba(226, 255, 0, 0.1)', fill: true, tension: 0.4, pointRadius: 4, pointHoverRadius: 6 },
-              { label: 'Likes', data: likes, borderColor: '#ff2a5f', backgroundColor: 'transparent', borderDash: [5, 5], tension: 0.4, pointRadius: 4, pointHoverRadius: 6 }
-            ]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            interaction: { mode: 'index', intersect: false },
-            plugins: {
-              legend: { labels: { color: 'rgba(255,255,255,0.8)', font: { family: "'Inter', sans-serif" } } },
-              tooltip: { backgroundColor: 'rgba(0,0,0,0.8)' }
-            },
-            scales: {
-              y: { beginAtZero: true, grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: "'Inter', sans-serif" } } },
-              x: { grid: { display: false }, ticks: { color: 'rgba(255,255,255,0.5)', font: { family: "'Inter', sans-serif" } } }
-            }
-          }
-        });
-      }
-    }
-
-    function updateTikTokChart(days) {
-      if(!currentTikTokData) return;
-      renderTikTokChart(currentTikTokData.videos, days);
-      if(window.event && window.event.target) {
-        const btn = window.event.target;
-        btn.parentElement.querySelectorAll('.time-filter').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-      }
-    }
 
     function renderTikTokVideos(videos) {
       const grid = document.getElementById('tiktok-video-grid');
@@ -1142,19 +936,17 @@
     }
 
     async function checkTikTokAuth() {
-      // Check query parameters for success or error
       const urlParams = new URLSearchParams(window.location.search);
       const error = urlParams.get('error');
       
       if (error) {
         const details = urlParams.get('details') ? `\nDetails: ${urlParams.get('details')}` : '';
         alert(t('error') + ': TikTok Auth Failed (' + error + ')' + details);
-        // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
+        setSkeletonState(false);
         return;
       }
 
-      // Try fetching TikTok data. If cookie is present and valid, it will succeed.
       try {
         const res = await fetch('/api/tiktok-data');
         const data = await res.json();
@@ -1165,15 +957,14 @@
             alert(t('error') + ': TikTok Data Fetch Failed. \n' + (data.error || ''));
             window.history.replaceState({}, document.title, window.location.pathname);
           }
+          setSkeletonState(false);
           return;
         }
 
         currentTikTokData = data;
 
-        // Hide login, show metrics
+        // Hide login card, show videos
         document.getElementById('tiktok-login-card').style.display = 'none';
-        document.getElementById('tiktok-metrics-grid').style.display = 'grid';
-        document.getElementById('tiktok-charts-container').style.display = 'block';
         document.getElementById('tiktok-video-grid-title').style.display = 'block';
         document.getElementById('tiktok-video-grid').style.display = 'grid';
         document.getElementById('connect-more-btn').style.display = 'inline-flex';
@@ -1196,15 +987,18 @@
           }
         }
         
-        // Animate and set values
-        animateValue(document.getElementById('val-tk-followers'), 0, data.stats.followers, 1000);
-        animateValue(document.getElementById('val-tk-likes'), 0, data.stats.total_likes, 1000);
-        animateValue(document.getElementById('val-tk-views'), 0, data.stats.estimated_total_views, 1000);
+        // Animate and set Top Metrics
+        const currentFollowers = parseInt(document.getElementById('val-followers').innerText) || 0;
+        const currentLikes = parseInt(document.getElementById('val-likes').innerText) || 0;
+        const currentViews = parseInt(document.getElementById('val-views').innerText) || 0;
+
+        animateValue(document.getElementById('val-followers'), currentFollowers, data.stats.followers, 1000);
+        animateValue(document.getElementById('val-likes'), currentLikes, data.stats.total_likes, 1000);
+        animateValue(document.getElementById('val-views'), currentViews, data.stats.estimated_total_views, 1000);
         
         // Render charts and videos
-        renderTikTokChart(data.videos, 30); // Default to 30D
-        document.querySelector('.tiktok-charts-container .time-filter[onclick="updateTikTokChart(30)"]').classList.add('active');
-        document.querySelector('.tiktok-charts-container .time-filter[onclick="updateTikTokChart(7)"]').classList.remove('active');
+        setSkeletonState(false);
+        updateDashboard(30);
         renderTikTokVideos(data.videos);
         
         if(urlParams.get('tiktok') === 'success') {
@@ -1212,13 +1006,18 @@
         }
       } catch(e) {
         console.log('TikTok not authenticated or fetch failed.', e);
+        setSkeletonState(false);
+        // Set metrics to 0
+        document.getElementById('val-followers').innerText = '0';
+        document.getElementById('val-likes').innerText = '0';
+        document.getElementById('val-views').innerText = '0';
       }
     }
 
     // Load data on page load
     document.addEventListener('DOMContentLoaded', () => {
       applyTranslations();
-      fetchAnalyticsData(7);
+      setSkeletonState(true);
       fetchRealtimeActiveUsers();
       checkTikTokAuth();
       // Poll real-time active users every 15 seconds
