@@ -1144,7 +1144,8 @@
       const error = urlParams.get('error');
       
       if (error) {
-        alert(t('error') + ': TikTok Auth Failed (' + error + ')');
+        const details = urlParams.get('details') ? `\nDetails: ${urlParams.get('details')}` : '';
+        alert(t('error') + ': TikTok Auth Failed (' + error + ')' + details);
         // Clean URL
         window.history.replaceState({}, document.title, window.location.pathname);
         return;

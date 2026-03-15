@@ -112,7 +112,7 @@ module.exports = async function handler(req, res) {
       `;
     } catch (dbError) {
       console.error('Database Error:', dbError);
-      return res.redirect(302, '/dashboard.html?error=db_error');
+      return res.redirect(302, `/dashboard.html?error=db_error&details=${encodeURIComponent(dbError.message || dbError)}`);
     }
 
     // Still set a session cookie to indicate the user is logged in
