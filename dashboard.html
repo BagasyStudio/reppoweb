@@ -1186,7 +1186,7 @@
               const pill = document.createElement('div');
               pill.style.cssText = 'display: inline-flex; align-items: center; background: rgba(255,255,255,0.05); padding: 6px 14px; border-radius: 20px; border: 1px solid rgba(255,255,255,0.1); font-size: 0.9rem;';
               const avatar = acc.avatar_url || 'https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?w=50';
-              pill.innerHTML = \`<img src="\${avatar}" style="width: 24px; height: 24px; border-radius: 50%; margin-right: 8px; border: 1px solid var(--accent);"><span style="font-weight: 500;">\${acc.display_name}</span>\`;
+              pill.innerHTML = `<img src="${avatar}" style="width: 24px; height: 24px; border-radius: 50%; margin-right: 8px; border: 1px solid var(--accent);"><span style="font-weight: 500;">${acc.display_name}</span>`;
               listContainer.appendChild(pill);
             });
           }
