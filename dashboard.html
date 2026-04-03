@@ -699,13 +699,13 @@
       </div>
     </div>
     
-    <!-- TikTok Integration Section -->
+    <!-- Zernio Integration Section -->
     <div class="tiktok-section" style="margin-top: 32px; animation: fadeUp 0.6s ease-out 0.3s both;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
-        <h2 class="chart-title" style="margin-bottom: 0;" data-i18n="tiktok_integration">TikTok Integration</h2>
-        <button onclick="openAccountSwitchModal()" id="connect-more-btn" class="tiktok-btn" style="display: none; padding: 6px 12px; font-size: 0.85rem; border:none; background:rgba(255,255,255,0.1);">
+        <h2 class="chart-title" style="margin-bottom: 0;" data-i18n="tiktok_integration">Zernio Social Accounts</h2>
+        <a href="https://zernio.com" target="_blank" id="connect-more-btn" class="tiktok-btn" style="display: none; padding: 6px 12px; font-size: 0.85rem; border:none; background:rgba(255,255,255,0.1); text-decoration: none;">
           <i class="fas fa-plus" style="margin-right: 6px;"></i> <span data-i18n="add_account">Add Account</span>
-        </button>
+        </a>
       </div>
       
       <!-- Linked Accounts List -->
@@ -713,17 +713,15 @@
       
       <!-- Logged Out State -->
       <div id="tiktok-login-card" class="metric-card" style="text-align: center; justify-content: center; align-items: center; min-height: 180px;">
-        <p style="color: var(--text-sec); margin-bottom: 16px;" data-i18n="connect_tiktok_desc">Connect your TikTok account to track profile performance and video views directly here.</p>
-        <a href="/api/tiktok-auth" class="tiktok-btn">
+        <p style="color: var(--text-sec); margin-bottom: 16px;" data-i18n="connect_tiktok_desc">Connect your social accounts via Zernio to see aggregated analytics here.</p>
+        <a href="https://zernio.com" target="_blank" class="tiktok-btn">
           <svg viewBox="0 0 24 24" fill="currentColor" width="20" height="20" style="margin-right: 8px;"><path d="M19.589 6.686a4.793 4.793 0 0 1-3.97-1.561 4.765 4.765 0 0 1-1.234-3.528v10.635a5.32 5.32 0 1 1-5.32-5.32c.366 0 .717.039 1.055.111v1.94c-.338-.073-.69-.111-1.055-.111a3.38 3.38 0 1 0 3.38 3.38V2.001h1.94a6.732 6.732 0 0 0 5.204 5.204v1.94c-1.583-.001-3.085-.458-4.364-1.282l-.001-.001z"/></svg>
-          <span data-i18n="signin_tiktok">Sign In with TikTok</span>
+          <span>Connect via Zernio</span>
         </a>
       </div>
 
-      <!-- TIKTOK RECENT VIDEOS SECTION -->
-
-      <!-- TIKTOK RECENT VIDEOS SECTION -->
-      <h3 id="tiktok-video-grid-title" class="chart-title" style="display: none; margin-top: 32px; margin-bottom: 16px;"><i class="fas fa-video" style="color: #ff2a5f; margin-right: 8px;"></i> Recent Videos</h3>
+      <!-- RECENT VIDEOS SECTION -->
+      <h3 id="tiktok-video-grid-title" class="chart-title" style="display: none; margin-top: 32px; margin-bottom: 16px;"><i class="fas fa-video" style="color: #ff2a5f; margin-right: 8px;"></i> Recent Posts</h3>
       <div class="video-grid" id="tiktok-video-grid">
         <!-- Videos injected via JS -->
       </div>
@@ -735,15 +733,14 @@
 
   </div>
 
-  <!-- Account Switch Warning Modal -->
+  <!-- Account Switch Warning Modal (Kept empty or hidden if no longer strictly needed in Zernio context) -->
   <div id="accountSwitchModal" class="modal-overlay">
     <div class="modal-card">
-      <div class="modal-icon"><i class="fas fa-exclamation-triangle"></i></div>
-      <h3 class="modal-title" data-i18n="modal_title">Wait a second!</h3>
-      <p class="modal-desc" data-i18n="modal_desc">TikTok automatically connects your currently active browser session. If you want to connect a <b>different</b> account, you must log out of TikTok.com first.</p>
+      <div class="modal-icon"><i class="fas fa-info-circle"></i></div>
+      <h3 class="modal-title">Zernio Integration</h3>
+      <p class="modal-desc">You can add more accounts directly in your Zernio dashboard. All accounts connected to your Zernio API key will appear here automatically.</p>
       <div class="modal-actions">
-        <a href="https://www.tiktok.com/logout" target="_blank" class="modal-btn secondary" onclick="closeAccountSwitchModal()"><i class="fas fa-external-link-alt" style="margin-right:8px;"></i> <span data-i18n="modal_btn_logout">Log out of TikTok.com</span></a>
-        <a href="/api/tiktok-auth" class="modal-btn primary"><i class="fab fa-tiktok" style="margin-right:8px;"></i> <span data-i18n="modal_btn_continue">Continue anyway</span></a>
+        <a href="https://zernio.com" target="_blank" class="modal-btn primary"><i class="fas fa-external-link-alt" style="margin-right:8px;"></i> Open Zernio</a>
         <button class="modal-btn secondary" onclick="closeAccountSwitchModal()" style="border:none; margin-top:-4px;" data-i18n="modal_btn_cancel">Cancel</button>
       </div>
     </div>
