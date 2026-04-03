@@ -22,7 +22,7 @@ const analyticsDataClient = new BetaAnalyticsDataClient(
 // The GA4 Property ID for Reppo Landing Page
 const propertyId = '528457019'; 
 
-export default async function handler(req, res) {
+module.exports = async function handler(req, res) {
   // Add CORS headers so dashboard.html can fetch this if needed 
   // (though it's on the same domain usually, it's good practice)
   res.setHeader('Access-Control-Allow-Credentials', true);

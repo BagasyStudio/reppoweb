@@ -1,0 +1,1 @@
+https://www.tiktok.com/v2/auth/authorize/?client_key=sbawrrb6mhjjbmdqnm&scope=user.info.basic,user.info.stats,video.list&response_type=code&redirect_uri=https%3A%2F%2Freppoweb.vercel.app%2Fapi%2Ftiktok-callback&state=12345

@@ -9,6 +9,7 @@
   "dependencies": {
     "@google-analytics/data": "^4.10.0",
     "@vercel/postgres": "^0.10.0",
+    "@zernio/node": "^0.2.37",
     "dotenv": "^17.3.1"
   }
 }
